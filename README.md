@@ -33,7 +33,7 @@ A modern, feature-rich Neovim configuration built with Lua and managed by [lazy.
 - **Scrollbar**: Enhanced scrollbar with diagnostic indicators
 
 ### Developer Experience
-- **AI Assistance**: Avante.nvim with Claude 3.5 Sonnet + GPT-4o fallback
+- **AI Assistance**: Avante.nvim with GPT-4o + Claude fallback
 - **GitHub Copilot**: AI-powered code completion
 - **Which-key**: Interactive keybinding help
 - **Auto-pairs**: Automatic bracket/quote pairing
@@ -95,7 +95,7 @@ nvim/
         │   ├── gruvbox.lua
         │   └── rose-pine.lua
         ├── theme-picker.lua # Theme switching functionality
-        ├── avante.lua      # AI assistance (Claude/GPT)
+        ├── avante.lua      # AI assistance (GPT/Claude)
         └── *.lua          # Individual plugin configs
 ```
 
@@ -136,8 +136,8 @@ Edit `lua/mappings.lua` to customize keybindings.
 ### API Keys (Optional)
 For AI assistance features, set these environment variables:
 ```bash
-export ANTHROPIC_API_KEY="your-claude-api-key"    # Primary AI provider
-export OPENAI_API_KEY="your-openai-api-key"       # Fallback AI provider
+export OPENAI_API_KEY="your-openai-api-key"       # Primary AI provider
+export ANTHROPIC_API_KEY="your-claude-api-key"    # Fallback AI provider
 ```
 
 ## Language Support

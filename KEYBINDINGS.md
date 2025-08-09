@@ -240,6 +240,19 @@
 
 ---
 
+## 🤖 AI Assistance (`<leader>a`)
+
+### Avante (GPT/Claude)
+| Key | Action | Mode |
+|-----|--------|------|
+| `<leader>aa` | Ask Avante | Normal/Visual |
+| `<leader>ar` | Refresh Avante | Normal |
+| `<leader>ae` | Edit with Avante | Normal/Visual |
+
+**Note**: Requires `OPENAI_API_KEY` (primary) or `ANTHROPIC_API_KEY` (fallback)
+
+---
+
 ## 🔧 Snacks Picker Internal
 
 | Key | Action | Context |
