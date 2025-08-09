@@ -33,6 +33,7 @@ A modern, feature-rich Neovim configuration built with Lua and managed by [lazy.
 - **Scrollbar**: Enhanced scrollbar with diagnostic indicators
 
 ### Developer Experience
+- **AI Assistance**: Avante.nvim with Claude 3.5 Sonnet + GPT-4o fallback
 - **GitHub Copilot**: AI-powered code completion
 - **Which-key**: Interactive keybinding help
 - **Auto-pairs**: Automatic bracket/quote pairing
@@ -51,33 +52,32 @@ A modern, feature-rich Neovim configuration built with Lua and managed by [lazy.
 
 ## Key Mappings
 
-### Window Navigation
-- `<C-h/j/k/l>` - Navigate between windows
-- `<C-d/u>` - Half-page scroll (centered)
-- `n/N` - Search navigation (centered)
+> **Note**: Press `<leader>` (space) to see all available keybindings with descriptions via which-key.
 
-### Git Operations
-- `<leader>gd` - Open Git diff view
-- `<leader>gh` - View git file history
-- `<leader>gld` - Toggle word diff
+### Essential Mappings
+- **Leader key**: `<space>`
+- **Window Navigation**: `<C-h/j/k/l>` - Navigate between windows  
+- **File Explorer**: `<leader>ee` (Oil) / `<leader>el` (nvim-tree)
+- **Find Files**: `<leader>ff` - Fuzzy find files
+- **Find Text**: `<leader>fg` - Search in files
+- **Format Code**: `grb` - Format current buffer
 
-### File Operations
-- `<leader>lf` - Copy relative file path to clipboard
+### Key Groups (via which-key)
+- `<leader>a` - **AI/Avante** (Claude/GPT assistance)
+- `<leader>d` - **Debug** (DAP debugging controls)
+- `<leader>e` - **Explorer** (File managers)
+- `<leader>f` - **Find** (File/text search, fuzzy finder)
+- `<leader>g` - **Git** (Git operations, diffs, history)
+- `<leader>h` - **Harpoon** (File bookmarks)
+- `<leader>l` - **LSP/Lint** (Language server, linting)
+- `<leader>r` - **Run** (Execute files/commands)
+- `<leader>s` - **Search/Replace** (Text replacement, Spectre)
+- `<leader>t` - **Test** (Testing framework)
+- `<leader>u` - **UI/Theme** (Themes, interface)
+- `gr` - **References** (LSP references, definitions)
 
-### Search & Replace
-- `<leader>ss` - Replace in buffer (with confirmation)
-- `<leader>sS` - Replace in buffer (no confirmation)
-- `<leader>sg` - Replace in all args (with confirmation)
-- `<leader>sG` - Replace in all args (no confirmation)
-
-### Theme Switching
-- `<leader>th` - Open interactive theme picker
-- `<leader>tc` - Cycle through all themes
-- `:ThemePicker` - Theme picker command
-- `:ThemeCycle` - Cycle theme command
-
-### Formatting
-- `grb` - Format current buffer
+### Quick Reference
+For a complete list of all keybindings, see [KEYBINDINGS.md](KEYBINDINGS.md) or use `<leader>` in Neovim to explore available options interactively.
 
 ## Configuration Structure
 
@@ -95,6 +95,7 @@ nvim/
         │   ├── gruvbox.lua
         │   └── rose-pine.lua
         ├── theme-picker.lua # Theme switching functionality
+        ├── avante.lua      # AI assistance (Claude/GPT)
         └── *.lua          # Individual plugin configs
 ```
 
@@ -131,6 +132,13 @@ Edit `lua/mappings.lua` to customize keybindings.
 - Language servers (installed automatically via Mason)
 - Optional: ripgrep for better searching
 - Optional: GitHub CLI for git linking features
+
+### API Keys (Optional)
+For AI assistance features, set these environment variables:
+```bash
+export ANTHROPIC_API_KEY="your-claude-api-key"    # Primary AI provider
+export OPENAI_API_KEY="your-openai-api-key"       # Fallback AI provider
+```
 
 ## Language Support
 

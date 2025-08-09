@@ -1,6 +1,7 @@
 return {
     {
         "L3MON4D3/LuaSnip",
+        event = "InsertEnter",
         dependencies = {
             "saadparwaiz1/cmp_luasnip",
             "hrsh7th/cmp-nvim-lua",
@@ -14,6 +15,7 @@ return {
     },
     {
         "hrsh7th/nvim-cmp",
+        event = "InsertEnter",
         config = function()
             local cmp = require("cmp")
             local lspkind = require("lspkind")

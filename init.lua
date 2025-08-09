@@ -52,7 +52,9 @@ require("lazy").setup({
     { require "configs.twilight" },
     { require "configs.render-markdown" },
     { require "configs.todo" },
-    -- { require 'configs.avante' },
+    { require "configs.spectre" },
+    { require "configs.leap" },
+    { require "configs.avante" },
 })
 
 -- Initialize theme picker

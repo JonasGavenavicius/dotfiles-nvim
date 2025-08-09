@@ -1,6 +1,7 @@
 return {
   {
     "neovim/nvim-lspconfig",
+    event = { "BufReadPre", "BufNewFile" },
     opts = {
       inlay_hints = { enabled = true },
     },
@@ -9,17 +10,22 @@ return {
       local util = require("lspconfig.util")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
       function RunCurrentFileInToggleTerm()
-        local file = vim.fn.expand("%")
+        local file = vim.fn.expand("%:p") -- Use full path for security
+        if file == "" or not vim.fn.filereadable(file) then
+          vim.notify("No valid file to run", vim.log.levels.WARN)
+          return
+        end
+        
         local ft = vim.bo.filetype
-        local cmd = nil
-
-        if ft == "go" then
-          cmd = "go run " .. file
-        elseif ft == "ruby" then
-          cmd = "bundle exec ruby " .. file
-        elseif ft == "rust" then
-          cmd = "cargo run"
-        else
+        local commands = {
+          go = "go run " .. vim.fn.shellescape(file),
+          ruby = "bundle exec ruby " .. vim.fn.shellescape(file),
+          rust = "cargo run",
+          python = "python " .. vim.fn.shellescape(file),
+        }
+        
+        local cmd = commands[ft]
+        if not cmd then
           vim.notify("Unsupported filetype: " .. ft, vim.log.levels.WARN)
           return
         end
