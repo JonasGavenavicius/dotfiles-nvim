@@ -9,6 +9,7 @@ local M = {
         input = {
           keys = {
             ["<C-t>"] = { "qflist", mode = { "i", "n" } },
+            ["<C-h>"] = { "toggle_hidden", mode = { "i", "n" } },
           }
         }
       }
