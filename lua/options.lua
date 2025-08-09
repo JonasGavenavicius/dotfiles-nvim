@@ -18,7 +18,6 @@ opt.relativenumber = true     -- Relative line numbers (helps with movement)
 opt.numberwidth = 2           -- Width of number column
 opt.ruler = false             -- Don't show ruler (cursor position) in command line
 opt.signcolumn = "yes"        -- Always show sign column
-opt.cursorline = true         -- Highlight current line
 opt.cursorlineopt = "number"  -- Only highlight the number column
 opt.fillchars = { eob = " " } -- Remove ~ from end-of-buffer lines
 opt.winborder = "rounded"     -- Use rounded borders (for floating windows etc.)

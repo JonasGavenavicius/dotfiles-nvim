@@ -54,3 +54,11 @@ map("n", "<leader>sS", replace_cmd("%", false), { desc = "Replace in buffer (no 
 map("n", "<leader>ss", replace_cmd("%", true), { desc = "Replace in buffer (confirm each)" })
 map("n", "<leader>sG", replace_cmd("argdo", false), { desc = "Replace in all args (no confirm)" })
 map("n", "<leader>sg", replace_cmd("argdo", true), { desc = "Replace in all args (confirm each)" })
+
+-- Theme switching
+map("n", "<leader>th", function()
+    require("configs.theme-picker").pick_theme()
+end, { desc = "Theme picker" })
+map("n", "<leader>tc", function()
+    require("configs.theme-picker").cycle_theme()
+end, { desc = "Cycle theme" })

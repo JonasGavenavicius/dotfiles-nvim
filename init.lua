@@ -14,11 +14,11 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
     -- Themes
     { require "configs.themes.catppuccin" },
-    -- { require "configs.themes.material" },
-    -- { require "configs.themes.cyberdream" },
+    { require "configs.themes.gruvbox" },
+    { require "configs.themes.rose-pine" },
 
     -- Plugins
-    { require "configs.plenary" },
+    { "nvim-lua/plenary.nvim" }, -- Utility library (dependency for many plugins)
     { require "configs.lspkind" },
     { require "configs.web-icons" },
     { require "configs.which-key" },
@@ -54,6 +54,10 @@ require("lazy").setup({
     { require "configs.todo" },
     -- { require 'configs.avante' },
 })
+
+-- Initialize theme picker
+require("configs.theme-picker").setup()
+
 vim.schedule(function()
     require "mappings"
 end)
