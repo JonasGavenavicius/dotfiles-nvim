@@ -1,0 +1,37 @@
+# Neovim specific
+.netrwhist
+*.tmp
+*.swp
+*.swo
+*~
+.nvimlog
+
+# Plugin manager cache
+lazy-lock.json.bak
+
+# IDE Files  
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+
+# AI Tools
+.aider*
+.cursor/
+
+# Logs and debug
+*.log
+debug.log
+
+# Environment files
+.env
+.env.local
+
+# Temporary files
+.tmp/
+temp/
+*.bak
+*.backup
