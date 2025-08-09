@@ -46,11 +46,12 @@ require("lazy").setup({
     { require "configs.gitsigns" },
     { require "configs.nvim-scrollbar" },
     { require "configs.gitlinker" },
-    { require "configs.git-owners" },
+    { require "configs.codeowners" },
     { require "configs.snacks" },
     { require "configs.diffview" },
     { require "configs.twilight" },
     { require "configs.render-markdown" },
+    { require "configs.todo" },
     -- { require 'configs.avante' },
 })
 vim.schedule(function()

@@ -18,21 +18,26 @@ local M = {
 
 M.config = function(_, opts)
   require("snacks").setup(opts)
-  
+
   local map = vim.keymap.set
   local picker = require("snacks").picker
-  
+  local todo = require("todo-comments")
+
   -- Core file operations
   map("n", "<leader>ff", picker.files, { desc = "Find Files" })
   map("n", "<leader>fg", function() picker.grep({ regex = false }) end, { desc = "Grep (Literal)" })
   map("n", "<leader>fr", picker.grep, { desc = "Grep (Regex)" })
   map("n", "<leader>fb", picker.buffers, { desc = "Buffers" })
   map("n", "<leader>fH", picker.help, { desc = "Help Tags" })
-  
+  map("n", "<leader>fT", function()
+    todo.search()
+    picker.qflist()
+  end, { desc = "Todos (via qflist)" })
+
   -- Git operations
   map("n", "<leader>gt", picker.git_status, { desc = "Git Status" })
   map("n", "<leader>gs", picker.git_log, { desc = "Git Log" })
-  
+
   -- LSP operations
   map("n", "grr", picker.lsp_references, { desc = "LSP References" })
   map("n", "gri", picker.lsp_implementations, { desc = "LSP Implementations" })
