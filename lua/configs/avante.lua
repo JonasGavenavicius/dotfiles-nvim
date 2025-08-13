@@ -1,7 +1,13 @@
 return {
   "yetone/avante.nvim",
   build = "make",
-  lazy = false,
+  lazy = true,
+  cmd = { "AvanteAsk", "AvanteEdit", "AvanteRefresh", "AvanteToggle" },
+  keys = {
+    { "<leader>aa", desc = "Ask Avante" },
+    { "<leader>ae", desc = "Edit with Avante" },
+    { "<leader>ar", desc = "Refresh Avante" },
+  },
   opts = {
     provider = "openai", -- primary, with claude as fallback
     auto_suggestions = false,

@@ -114,7 +114,22 @@
 | `<leader>ll` | Trigger linting for current file | Any buffer |
 | `ga` | Code Action | Normal/Visual |
 | `grl` | Open File Diagnostics (Loclist) | LSP buffer |
-| `<leader>rf` | Run current file in terminal | Supported filetypes |
+
+## 🚀 Run Commands (`<leader>r`)
+
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<leader>rf` | Run current file | Run current file with default command |
+| `<leader>rc` | Run current file (custom) | Run current file with custom arguments |
+
+### Supported File Types for Run Commands
+- **Go**: `go run file.go`
+- **Rust**: `cargo run` 
+- **Ruby**: `bundle exec ruby file.rb`
+- **Python**: `python file.py`
+- **JavaScript**: `node file.js`
+- **TypeScript**: `tsx file.ts`
+- **Lua**: `lua file.lua`
 
 ### LSP References (`gr`)
 | Key | Action | Plugin |
@@ -174,6 +189,7 @@
 |-----|--------|-------------|
 | `<leader>uh` | Theme picker | Open interactive theme picker |
 | `<leader>uc` | Cycle theme | Cycle through all themes |
+| `<leader>ut` | Toggle transparency | Toggle theme transparency |
 
 ### Available Themes
 - **Catppuccin**: Latte, Frappe, Macchiato, Mocha
@@ -183,11 +199,35 @@
 ### Theme Commands
 - `:ThemePicker` - Open theme picker
 - `:ThemeCycle` - Cycle to next theme
+- `:ToggleTransparency` - Toggle theme transparency
 
 ---
 
 ## 🔄 Git Operations (`<leader>g`)
 
+### Git Navigation & Workflow
+| Key | Action | Plugin |
+|-----|--------|--------|
+| `]h` | Next git hunk | Gitsigns |
+| `[h` | Previous git hunk | Gitsigns |
+| `<leader>ghp` | Preview hunk changes | Gitsigns |
+
+### Git Hunk Actions
+| Key | Action | Plugin |
+|-----|--------|--------|
+| `<leader>ghs` | Stage current hunk | Gitsigns |
+| `<leader>ghr` | Reset current hunk | Gitsigns |
+| `<leader>ghu` | Undo stage hunk | Gitsigns |
+| `<leader>ghs` (Visual) | Stage selected lines | Gitsigns |
+
+### Git Buffer Operations
+| Key | Action | Plugin |
+|-----|--------|--------|
+| `<leader>gbs` | Stage entire buffer | Gitsigns |
+| `<leader>gbr` | Reset entire buffer | Gitsigns |
+| `<leader>gbl` | Toggle line blame | Gitsigns |
+
+### Git Views & History
 | Key | Action | Plugin |
 |-----|--------|--------|
 | `<leader>gd` | Git Diffview | Diffview |
@@ -195,6 +235,10 @@
 | `<leader>gld` | Toggle Word Diff | Gitsigns |
 | `<leader>gt` | Git Status | Snacks |
 | `<leader>gs` | Git Log | Snacks |
+
+### GitHub Integration
+| Key | Action | Plugin |
+|-----|--------|--------|
 | `<leader>gy` | Copy GitHub link to current line | Gitlinker |
 | `<leader>gb` | Open GitHub link in browser | Gitlinker |
 

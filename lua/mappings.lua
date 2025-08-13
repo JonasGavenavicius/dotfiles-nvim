@@ -12,10 +12,6 @@ map("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 map("v", "<", "<gv", { desc = "Indent left and reselect" })
 map("v", ">", ">gv", { desc = "Indent right and reselect" })
 
--- Git integrations
-map("n", "<leader>gd", "<cmd>DiffviewOpen<cr>", { desc = "Git Diffview" })
-map("n", "<leader>gh", "<cmd>DiffviewFileHistory<cr>", { desc = "Git File History" })
-map("n", "<leader>gld", "<cmd>Gitsigns toggle_word_diff<cr>", { desc = "Gitsigns: Toggle Word Diff" })
 
 -- LSP / Buffer
 map("n", "grb", function()
@@ -55,16 +51,4 @@ map("n", "<leader>ss", replace_cmd("%", true), { desc = "Replace in buffer (conf
 map("n", "<leader>sG", replace_cmd("argdo", false), { desc = "Replace in all args (no confirm)" })
 map("n", "<leader>sg", replace_cmd("argdo", true), { desc = "Replace in all args (confirm each)" })
 
--- Theme switching
-map("n", "<leader>uh", function()
-    require("configs.theme-picker").pick_theme()
-end, { desc = "Theme picker" })
-map("n", "<leader>uc", function()
-    require("configs.theme-picker").cycle_theme()
-end, { desc = "Cycle theme" })
 
--- Enhanced search and replace
-map("n", "<leader>sR", "<cmd>lua require('spectre').toggle()<CR>", { desc = "Replace (Spectre)" })
-map("n", "<leader>sw", "<cmd>lua require('spectre').open_visual({select_word=true})<CR>", { desc = "Replace current word (Spectre)" })
-map("v", "<leader>sw", "<esc><cmd>lua require('spectre').open_visual()<CR>", { desc = "Replace selection (Spectre)" })
-map("n", "<leader>sf", "<cmd>lua require('spectre').open_file_search({select_word=true})<CR>", { desc = "Replace in file (Spectre)" })

@@ -1,3 +1,4 @@
+
 local M = {
     "folke/which-key.nvim",
     keys = { "<leader>", "<c-r>", "<c-w>", '"', "'", "`", "c", "v", "g" },
@@ -13,25 +14,28 @@ local M = {
                 margin = { 1, 0, 1, 0 },
                 padding = { 1, 2, 1, 2 },
             },
+            notify = false, -- Disable overlap warnings
+            ignore_missing = true,
         })
-        
-        -- Register key groups for better organization
-        wk.register({
-            ["<leader>a"] = { name = "+AI/Avante" },
-            ["<leader>d"] = { name = "+Debug" },
-            ["<leader>e"] = { name = "+Explorer" },
-            ["<leader>f"] = { name = "+Find" },
-            ["<leader>g"] = { name = "+Git" },
-            ["<leader>h"] = { name = "+Harpoon" },
-            ["<leader>l"] = { name = "+LSP/Lint" },
-            ["<leader>r"] = { name = "+Run" },
-            ["<leader>s"] = { name = "+Search/Replace" },
-            ["<leader>t"] = { name = "+Test" },
-            ["<leader>tr"] = { name = "+Test Ruby" },
-            ["<leader>u"] = { name = "+UI/Theme" },
-            ["gr"] = { name = "+References" },
+
+        -- Updated to new which-key spec
+        wk.add({
+            { "<leader>a", group = "AI/Avante" },
+            { "<leader>d", group = "Debug" },
+            { "<leader>e", group = "Explorer" },
+            { "<leader>f", group = "Find" },
+            { "<leader>g", group = "Git" },
+            { "<leader>h", group = "Harpoon" },
+            { "<leader>l", group = "LSP/Lint" },
+            { "<leader>r", group = "Run" },
+            { "<leader>s", group = "Search/Replace" },
+            { "<leader>t", group = "Test" },
+            { "<leader>tr", group = "Test Ruby" },
+            { "<leader>u", group = "UI/Theme" },
+            { "gr", group = "References" },
         })
     end,
 }
 
 return M
+

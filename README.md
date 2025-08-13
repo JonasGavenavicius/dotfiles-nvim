@@ -1,154 +1,154 @@
 # Neovim Configuration
 
-A modern, feature-rich Neovim configuration built with Lua and managed by [lazy.nvim](https://github.com/folke/lazy.nvim).
+A modern, feature-rich Neovim configuration built with Lua and managed by [lazy.nvim](https://github.com/folke/lazy.nvim). This configuration provides a comprehensive development environment with 43 plugins supporting multiple languages, AI assistance, robust testing, and extensive customization.
 
-## Features
+## Quick Installation
 
-### Core Functionality
-- **LSP Support**: Full Language Server Protocol integration with Mason for automatic server management
-- **Syntax Highlighting**: Advanced syntax highlighting with Treesitter
-- **Auto-completion**: Intelligent code completion with nvim-cmp
-- **Debugging**: Built-in debugging support with DAP (Debug Adapter Protocol)
-- **Testing**: Integrated test runner with Neotest
-- **Code Formatting**: Automatic code formatting with Conform
-- **Linting**: Real-time code linting with nvim-lint
+```bash
+# Clone the configuration
+git clone <your-repo-url> ~/.config/nvim
 
-### Navigation & File Management
-- **File Explorer**: Dual file managers - nvim-tree and oil-nvim
-- **Fuzzy Finding**: Fast file and text search capabilities
-- **Quick Navigation**: Harpoon for rapid file switching
-- **Session Management**: Persistent sessions with automatic restore
+# Launch Neovim - plugins will install automatically
+nvim
+```
 
-### Git Integration
-- **Git Signs**: Inline git status indicators
-- **Diff View**: Visual git diff and file history
-- **Git Linking**: Quick GitHub/GitLab link generation
+> **Keymaps**: See [KEYBINDINGS.md](KEYBINDINGS.md) for complete keymap reference.
 
-### UI & Theming
-- **Theme Picker**: Interactive theme switcher with 8 variants across 3 color schemes
-- **Themes**: Catppuccin (4 variants), Gruvbox, Rose Pine (3 variants)
-- **Status Line**: Customized Lualine status bar
-- **Icons**: Web-devicons for file type recognition
-- **Indentation**: Visual indent guides with mini-indentscope
-- **Scrollbar**: Enhanced scrollbar with diagnostic indicators
+## Key Features
 
-### Developer Experience
-- **AI Assistance**: Avante.nvim with GPT-4o + Claude fallback
-- **GitHub Copilot**: AI-powered code completion
-- **Which-key**: Interactive keybinding help
-- **Auto-pairs**: Automatic bracket/quote pairing
-- **Folding**: Intelligent code folding with nvim-ufo
-- **Terminal**: Integrated terminal with toggleterm
-- **Todo Comments**: Highlight and navigate TODO comments
+- **LSP Support**: Full Language Server Protocol integration with Mason
+- **AI Assistance**: GitHub Copilot + Avante.nvim (GPT-4o/Claude)
+- **Debugging**: DAP integration for Go, Rust, Ruby
+- **Testing**: Neotest framework for Jest, RSpec, Go, Rust
+- **Git Integration**: Gitsigns, Diffview, Gitlinker
+- **Code Quality**: Formatting (Conform), Linting (nvim-lint)
+- **Themes**: 3 themes with 8 variants + transparency toggle
+- **File Management**: nvim-tree + Oil.nvim
+- **Enhanced Navigation**: Harpoon 2, Leap motion, Snacks picker
+- **Smart Completion**: nvim-cmp with multiple sources and snippets
 
-## Installation
+## System Requirements
 
-1. Ensure you have Neovim 0.9+ installed
-2. Clone this configuration:
-   ```bash
-   git clone <your-repo-url> ~/.config/nvim
-   ```
-3. Launch Neovim - plugins will install automatically via lazy.nvim
+- **Neovim**: ≥ 0.11.0 (uses modern LSP features)
+- **Nerd Font**: For proper icon display
 
-## Key Mappings
+## External Dependencies
 
-> **Note**: Press `<leader>` (space) to see all available keybindings with descriptions via which-key.
+### Essential Tools
+- **git**: Version control (gitsigns, diffview, gitlinker)
+- **curl/wget**: Package downloads (Mason)
+- **unzip, tar, gzip**: Archive extraction (Mason)
+- **ripgrep**: Fast searching (Snacks picker, Spectre)
+- **sed**: Text processing (Spectre)
+- **make**: Building native extensions (Avante.nvim)
+- **Node.js**: JavaScript ecosystem tools (various formatters/linters)
 
-### Essential Mappings
-- **Leader key**: `<space>`
-- **Window Navigation**: `<C-h/j/k/l>` - Navigate between windows  
-- **File Explorer**: `<leader>ee` (Oil) / `<leader>el` (nvim-tree)
-- **Find Files**: `<leader>ff` - Fuzzy find files
-- **Find Text**: `<leader>fg` - Search in files
-- **Format Code**: `grb` - Format current buffer
+### Language-Specific Tools
 
-### Key Groups (via which-key)
-- `<leader>a` - **AI/Avante** (Claude/GPT assistance)
-- `<leader>d` - **Debug** (DAP debugging controls)
-- `<leader>e` - **Explorer** (File managers)
-- `<leader>f` - **Find** (File/text search, fuzzy finder)
-- `<leader>g` - **Git** (Git operations, diffs, history)
-- `<leader>h` - **Harpoon** (File bookmarks)
-- `<leader>l` - **LSP/Lint** (Language server, linting)
-- `<leader>r` - **Run** (Execute files/commands)
-- `<leader>s` - **Search/Replace** (Text replacement, Spectre)
-- `<leader>t` - **Test** (Testing framework)
-- `<leader>u` - **UI/Theme** (Themes, interface)
-- `gr` - **References** (LSP references, definitions)
+#### Go Development
+- `gopls`: LSP server (Mason/LSP Config)
+- `gofumpt`, `goimports`, `goimports-reviser`: Formatters (Conform)
 
-### Quick Reference
-For a complete list of all keybindings, see [KEYBINDINGS.md](KEYBINDINGS.md) or use `<leader>` in Neovim to explore available options interactively.
+#### Rust Development  
+- `rust-analyzer`: LSP server (Mason/LSP Config)
+- `codelldb`: Debugger (Mason/DAP)
+
+#### Ruby Development
+- `ruby-lsp`: LSP server (Mason/LSP Config) 
+- `readapt`: Debugger (DAP)
+- `bundle`, `rspec`: Testing (Neotest)
+
+#### JavaScript/TypeScript
+- `prettier`: Formatter (Conform)
+- `eslint_d`: Fast linter (nvim-lint)
+- `jest`: Testing (Neotest)
+
+#### Python
+- `black`, `isort`: Formatters (Conform)
+
+#### Lua
+- `stylua`: Formatter (Conform)
+
+### AI Services
+- **GitHub Copilot**: Subscription + `:Copilot auth` (Copilot)
+- **OpenAI API**: `OPENAI_API_KEY` env var (Avante.nvim)
+- **Anthropic API**: `ANTHROPIC_API_KEY` env var (Avante.nvim fallback)
+
+## Language Support Matrix
+
+| Language | LSP | Debug | Format | Lint | Test |
+|----------|-----|-------|--------|------|------|
+| **Go** | ✅ gopls | ✅ DAP | ✅ gofumpt | ✅ | ✅ Neotest |
+| **Rust** | ✅ rust-analyzer | ✅ codelldb | ✅ rustfmt | ✅ | ✅ Neotest |
+| **Ruby** | ✅ ruby-lsp | ✅ readapt | ✅ | ✅ | ✅ RSpec |
+| **JavaScript/TS** | ✅ | ❌ | ✅ prettier | ✅ eslint_d | ✅ Jest |
+| **Python** | ✅ | ❌ | ✅ black/isort | ✅ | ❌ |
+| **Lua** | ✅ lua_ls | ❌ | ✅ stylua | ✅ | ❌ |
+
+### LSP Configuration Details
+
+The configuration provides comprehensive LSP support with these key features:
+
+- **Automatic Server Installation**: Mason auto-installs and manages language servers
+- **Enhanced Capabilities**: nvim-cmp integration for better completions
+- **Custom Keymaps**: `ga` for code actions, `grl` for diagnostics
+- **Language-Specific Setup**: 
+  - **Go**: Full LSP with gopls, custom run commands
+  - **Rust**: rust-analyzer with enhanced settings
+  - **Ruby**: ruby-lsp integration with Rails support
 
 ## Configuration Structure
 
 ```
 nvim/
-├── init.lua                 # Main configuration entry point
-├── lazy-lock.json          # Plugin lock file
-└── lua/
-    ├── autocmds.lua        # Autocommands
-    ├── mappings.lua        # Key mappings
-    ├── options.lua         # Neovim options
-    └── configs/            # Plugin configurations
-        ├── themes/         # Color scheme configurations
-        │   ├── catppuccin.lua
-        │   ├── gruvbox.lua
-        │   └── rose-pine.lua
-        ├── theme-picker.lua # Theme switching functionality
-        ├── avante.lua      # AI assistance (GPT/Claude)
-        └── *.lua          # Individual plugin configs
+├── init.lua                    # Main entry point
+├── lazy-lock.json             # Plugin versions lock
+├── KEYBINDINGS.md             # Complete keymap reference
+├── lua/
+│   ├── autocmds.lua           # Auto commands
+│   ├── mappings.lua           # Global keymaps
+│   ├── options.lua            # Neovim settings
+│   └── configs/               # Plugin configurations
+│       ├── themes/            # Color schemes
+│       ├── theme-picker.lua   # Custom theme manager
+│       └── *.lua             # Individual plugin configs
 ```
 
-## Plugin Manager
+## Essential Commands
 
-This configuration uses [lazy.nvim](https://github.com/folke/lazy.nvim) for plugin management. Plugins are automatically installed on first launch, and the lock file ensures reproducible plugin versions.
+### Package Management
+- `:Lazy`: Open plugin manager
+- `:Mason`: Open LSP/tool installer
 
-## Themes
+### AI Setup
+```bash
+# Set API keys
+export OPENAI_API_KEY="your-key"
+export ANTHROPIC_API_KEY="your-key"
 
-### Available Themes
-- **Catppuccin**: Latte, Frappe, Macchiato, Mocha
-- **Gruvbox**: Dark variant
-- **Rose Pine**: Main, Moon, Dawn
+# Authenticate Copilot
+:Copilot auth
+```
 
-### Theme Management
-- Use `<leader>th` to open the theme picker and select from all available variants
-- Use `<leader>tc` to quickly cycle through themes
-- Your theme choice is automatically saved and restored on restart
-- Theme preferences are stored in `~/.local/share/nvim/theme_preference.lua`
+### Theme Management  
+- `:ThemePicker`: Interactive theme selection
+- `:ToggleTransparency`: Toggle transparency
+
+## Troubleshooting
+
+**LSP not working**: Run `:Mason` and install missing language servers
+**Formatters not found**: Install external tools (prettier, stylua, etc.)
+**Tests not detected**: Ensure test frameworks available in project  
+**Icons missing**: Install a Nerd Font in terminal
+**Performance issues**: Use `:Lazy profile` to check load times
 
 ## Customization
 
-### Adding New Plugins
-Add plugin configurations to the `configs/` directory and require them in `init.lua`.
+- **Keymaps**: Edit `lua/mappings.lua` or plugin-specific configs
+- **Themes**: Add to `lua/configs/themes/` and update theme picker
+- **Plugins**: Each has dedicated config in `lua/configs/`
+- **LSP**: Modify `lua/configs/lspconfig.lua` for language-specific settings
 
-### Modifying Key Mappings
-Edit `lua/mappings.lua` to customize keybindings.
+---
 
-## Requirements
-
-- Neovim 0.9+
-- Git
-- A Nerd Font for icons
-- Language servers (installed automatically via Mason)
-- Optional: ripgrep for better searching
-- Optional: GitHub CLI for git linking features
-
-### API Keys (Optional)
-For AI assistance features, set these environment variables:
-```bash
-export OPENAI_API_KEY="your-openai-api-key"       # Primary AI provider
-export ANTHROPIC_API_KEY="your-claude-api-key"    # Fallback AI provider
-```
-
-## Language Support
-
-This configuration provides excellent support for:
-- TypeScript/JavaScript
-- Ruby
-- Lua
-- Python
-- Go
-- Rust
-- And many more via LSP
-
-Language servers and formatters are automatically installed and configured through Mason.
+This configuration provides a complete, modern development environment optimized for multi-language programming with comprehensive tooling, AI assistance, and beautiful themes.

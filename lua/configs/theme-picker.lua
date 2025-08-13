@@ -1,5 +1,29 @@
 local M = {}
 
+-- Transparency state
+local transparency_enabled = false
+
+-- Theme-specific transparency configurations
+local function configure_theme_transparency(theme_cmd, transparent)
+    if theme_cmd:match("catppuccin") then
+        require("catppuccin").setup({
+            transparent_background = transparent,
+        })
+    elseif theme_cmd:match("gruvbox") then
+        if transparent then
+            vim.g.gruvbox_transparent_bg = 1
+        else
+            vim.g.gruvbox_transparent_bg = 0
+        end
+    elseif theme_cmd:match("rose-pine") then
+        require("rose-pine").setup({
+            styles = {
+                transparency = transparent,
+            },
+        })
+    end
+end
+
 -- Available themes with their display names and colorscheme commands
 local themes = {
     {
@@ -47,15 +71,27 @@ end
 
 -- Set theme and save preference
 local function set_theme(theme_cmd)
+    -- Configure theme transparency before applying
+    configure_theme_transparency(theme_cmd, transparency_enabled)
+    
     -- Apply the colorscheme
     vim.cmd.colorscheme(theme_cmd)
     
     -- Save the preference to a file for persistence
     local config_path = vim.fn.stdpath("data") .. "/theme_preference.lua"
+    local transparency_path = vim.fn.stdpath("data") .. "/transparency_preference.lua"
+    
     local file = io.open(config_path, "w")
     if file then
         file:write(string.format('vim.cmd.colorscheme("%s")\n', theme_cmd))
         file:close()
+    end
+    
+    -- Save transparency state
+    local trans_file = io.open(transparency_path, "w")
+    if trans_file then
+        trans_file:write(string.format('return %s\n', tostring(transparency_enabled)))
+        trans_file:close()
     end
     
     -- Update the global variable for statusline
@@ -64,13 +100,35 @@ local function set_theme(theme_cmd)
     vim.notify("Theme changed to: " .. theme_cmd, vim.log.levels.INFO)
 end
 
+-- Toggle transparency
+function M.toggle_transparency()
+    transparency_enabled = not transparency_enabled
+    
+    -- Reapply current theme with new transparency setting
+    local current_theme = vim.g.colors_name or "catppuccin-mocha"
+    set_theme(current_theme)
+    
+    local status = transparency_enabled and "enabled" or "disabled"
+    vim.notify("Transparency " .. status, vim.log.levels.INFO)
+end
+
 -- Load saved theme preference
 local function load_saved_theme()
+    -- Load transparency preference
+    local transparency_path = vim.fn.stdpath("data") .. "/transparency_preference.lua"
+    if vim.fn.filereadable(transparency_path) == 1 then
+        transparency_enabled = dofile(transparency_path)
+    end
+    
     local config_path = vim.fn.stdpath("data") .. "/theme_preference.lua"
     if vim.fn.filereadable(config_path) == 1 then
         dofile(config_path)
+        -- Apply transparency to loaded theme
+        local current_theme = vim.g.colors_name or "catppuccin-mocha"
+        configure_theme_transparency(current_theme, transparency_enabled)
     else
         -- Default theme if no preference saved
+        configure_theme_transparency("catppuccin-mocha", transparency_enabled)
         vim.cmd.colorscheme("catppuccin-mocha")
     end
 end
@@ -123,6 +181,13 @@ function M.setup()
     -- Create user commands
     vim.api.nvim_create_user_command("ThemePicker", M.pick_theme, { desc = "Open theme picker" })
     vim.api.nvim_create_user_command("ThemeCycle", M.cycle_theme, { desc = "Cycle to next theme" })
+    vim.api.nvim_create_user_command("ToggleTransparency", M.toggle_transparency, { desc = "Toggle theme transparency" })
+    
+    -- Set up keymaps
+    local map = vim.keymap.set
+    map("n", "<leader>uh", M.pick_theme, { desc = "Theme picker" })
+    map("n", "<leader>uc", M.cycle_theme, { desc = "Cycle theme" })
+    map("n", "<leader>ut", M.toggle_transparency, { desc = "Toggle transparency" })
 end
 
 return M

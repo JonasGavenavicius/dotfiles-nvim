@@ -1,5 +1,7 @@
 local M = {
   "nvim-neotest/neotest",
+  lazy = true,
+  commit = "747775fc22dfeb6102bdde6559ccb5126dac0ff8", -- Pin to specific stable version
   dependencies = {
     "nvim-neotest/nvim-nio",
     "nvim-lua/plenary.nvim",
@@ -10,16 +12,14 @@ local M = {
     "rouge8/neotest-rust",
     "nvim-neotest/neotest-vim-test",
     "fredrikaverpil/neotest-golang",
-    "olimorris/neotest-rspec",
+    { "olimorris/neotest-rspec", commit = "281c0ed0e55d623e8028796e1c4dc27b7e421fd0" },
   },
-  config = function()
-    require("config.cfg_neotest")
-  end,
 }
 
 M.config = function()
   local neotest = require("neotest")
   neotest.setup({
+    log_level = vim.log.levels.DEBUG,
     adapters = {
       require("neotest-jest"),
       -- require('rustaceanvim.neotest'),
@@ -31,7 +31,12 @@ M.config = function()
       require("neotest-rspec")({
         rspec_cmd = function()
           return vim.tbl_flatten({ "bundle", "exec", "rspec" })
-        end
+        end,
+        root_files = { "Gemfile", ".rspec", "spec" },
+        filter_dirs = { ".git", "node_modules" },
+        transform_spec_path = function(path)
+          return path
+        end,
       }),
     },
     icons = {
@@ -79,6 +84,30 @@ M.config = function()
       end,
     })
   end, { desc = "Kill all running RSpec tests" })
+  
+  -- Debug function to check adapter detection
+  vim.keymap.set("n", "<leader>trd", function()
+    local current_file = vim.fn.expand("%:p")
+    print("Current file: " .. current_file)
+    print("File type: " .. vim.bo.filetype)
+    
+    -- Check treesitter parser
+    local has_parser = pcall(vim.treesitter.get_parser, 0, "ruby")
+    print("Has Ruby treesitter parser: " .. tostring(has_parser))
+    
+    -- Try to get neotest adapters
+    local ok, neotest = pcall(require, "neotest")
+    if ok then
+      local tree = neotest.state.positions()
+      if tree then
+        print("Neotest tree exists - tests should be detected")
+      else
+        print("No neotest tree found - no tests detected")
+      end
+    else
+      print("Failed to load neotest")
+    end
+  end, { desc = "Debug neotest adapter detection" })
 end
 
 M.keys = {
