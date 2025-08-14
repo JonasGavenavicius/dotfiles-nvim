@@ -20,6 +20,14 @@ M.config = function()
   local neotest = require("neotest")
   neotest.setup({
     log_level = vim.log.levels.DEBUG,
+    -- Performance optimizations for large codebases
+    discovery = {
+      enabled = false, -- Disable automatic test discovery
+    },
+    -- Only load tests when explicitly requested, not on startup
+    status = {
+      enabled = false, -- Disable status signs by default
+    },
     adapters = {
       require("neotest-jest"),
       -- require('rustaceanvim.neotest'),
@@ -33,7 +41,16 @@ M.config = function()
           return vim.tbl_flatten({ "bundle", "exec", "rspec" })
         end,
         root_files = { "Gemfile", ".rspec", "spec" },
-        filter_dirs = { ".git", "node_modules" },
+        filter_dirs = { ".git", "node_modules", "vendor", "tmp", "log", "public", "storage" },
+        -- Performance: Only discover tests for current file, not entire directory
+        is_test_file = function(file_path)
+          -- Only consider files that are currently open or explicitly requested
+          local current_file = vim.fn.expand("%:p")
+          if file_path == current_file then
+            return file_path:match("_spec%.rb$") ~= nil
+          end
+          return false
+        end,
         transform_spec_path = function(path)
           return path
         end,
@@ -108,6 +125,26 @@ M.config = function()
       print("Failed to load neotest")
     end
   end, { desc = "Debug neotest adapter detection" })
+  
+  -- Manual discovery commands for better control (using <leader>ts prefix for "test scan")
+  vim.keymap.set("n", "<leader>tsf", function()
+    require("neotest").run.run(vim.fn.expand("%"))
+    vim.notify("Discovered tests in current file", vim.log.levels.INFO)
+  end, { desc = "Discover tests in current file" })
+  
+  vim.keymap.set("n", "<leader>tsd", function() 
+    local current_dir = vim.fn.expand("%:p:h")
+    require("neotest").run.run(current_dir)
+    vim.notify("Discovered tests in current directory", vim.log.levels.INFO)
+  end, { desc = "Discover tests in current directory" })
+  
+  vim.keymap.set("n", "<leader>tsp", function()
+    -- Find project root and discover all tests
+    local project_root = vim.fn.getcwd()
+    vim.notify("Discovering all tests in project (this may take a while)...", vim.log.levels.WARN)
+    require("neotest").run.run(project_root)
+    vim.notify("Discovered all tests in project", vim.log.levels.INFO)
+  end, { desc = "Discover all tests in project" })
 end
 
 M.keys = {
@@ -116,7 +153,7 @@ M.keys = {
   { "<leader>tf", function() require("neotest").run.run(vim.fn.expand("%")) end,   desc = "Run file tests" },
   { "<leader>ta", function() require("neotest").run.run({ suite = true }) end,     desc = "Run test suite" },
   { "<leader>tl", function() require("neotest").run.run_last() end,                desc = "Run last test" },
-  { "<leader>ts", function() require("neotest").run.stop() end,                    desc = "Stop test" },
+  { "<leader>tk", function() require("neotest").run.stop() end,                    desc = "Stop test" },
   { "<leader>to", function() require("neotest").output.open({ enter = true }) end, desc = "Show test output" },
   { "<leader>tt", function() require("neotest").summary.toggle() end,              desc = "Toggle test summary" },
 }

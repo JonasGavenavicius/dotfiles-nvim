@@ -76,7 +76,7 @@ return {
                     ["<C-e>"] = cmp.mapping.abort(),
                     ["<CR>"] = cmp.mapping.confirm({
                         behavior = cmp.ConfirmBehavior.Insert,
-                        select = true,
+                        select = false, -- Only confirm if explicitly selected
                     }),
                     ["<Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then

@@ -31,6 +31,7 @@ local M = {
             { "<leader>s", group = "Search/Replace" },
             { "<leader>t", group = "Test" },
             { "<leader>tr", group = "Test Ruby" },
+            { "<leader>ts", group = "Test Scan" },
             { "<leader>u", group = "UI/Theme" },
             { "gr", group = "References" },
         })

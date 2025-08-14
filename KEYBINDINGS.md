@@ -152,7 +152,7 @@
 | `<leader>tf` | Run file tests | Run all tests in file |
 | `<leader>ta` | Run test suite | Run all tests |
 | `<leader>tl` | Run last test | Run last executed test |
-| `<leader>ts` | Stop test | Stop running tests |
+| `<leader>tk` | Stop test | Stop running tests |
 | `<leader>to` | Show test output | Show test output panel |
 | `<leader>tt` | Toggle test summary | Toggle test summary window |
 
@@ -161,6 +161,13 @@
 |-----|--------|-------------|
 | `<leader>trn` | Run nearest ruby test in terminal | Run RSpec test in terminal |
 | `<leader>trk` | Kill all running RSpec tests | Kill all RSpec processes |
+
+### Test Discovery (`<leader>ts`)
+| Key | Action | Description |
+|-----|--------|-------------|
+| `<leader>tsf` | Discover tests in current file | Scan only current file for tests |
+| `<leader>tsd` | Discover tests in current directory | Scan current directory for tests |
+| `<leader>tsp` | Discover all tests in project | Scan entire project (may take time) |
 
 ---
 
@@ -255,7 +262,7 @@
 | `<C-f>` | Scroll docs down | Completion menu |
 | `<C-Space>` | Complete | Insert mode |
 | `<C-e>` | Abort completion | Completion menu |
-| `<CR>` | Confirm selection | Completion menu |
+| `<CR>` | Confirm selection (only if explicitly selected) | Completion menu |
 | `<Tab>` | Next item/expand snippet | Completion/snippet |
 | `<S-Tab>` | Previous item/jump back | Completion/snippet |
 
