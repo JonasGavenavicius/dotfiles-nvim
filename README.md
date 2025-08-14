@@ -1,6 +1,6 @@
 # Neovim Configuration
 
-A modern, feature-rich Neovim configuration built with Lua and managed by [lazy.nvim](https://github.com/folke/lazy.nvim). This configuration provides a comprehensive development environment with 43 plugins supporting multiple languages, AI assistance, robust testing, and extensive customization.
+Neovim configuration with 43 plugins. Built with Lua and managed by [lazy.nvim](https://github.com/folke/lazy.nvim).
 
 ## Quick Installation
 
@@ -14,22 +14,22 @@ nvim
 
 > **Keymaps**: See [KEYBINDINGS.md](KEYBINDINGS.md) for complete keymap reference.
 
-## Key Features
+## Features
 
-- **LSP Support**: Full Language Server Protocol integration with Mason
-- **AI Assistance**: GitHub Copilot + Avante.nvim (GPT-4o/Claude)
-- **Debugging**: DAP integration for Go, Rust, Ruby
-- **Testing**: Neotest framework for Jest, RSpec, Go, Rust
-- **Git Integration**: Gitsigns, Diffview, Gitlinker
-- **Code Quality**: Formatting (Conform), Linting (nvim-lint)
-- **Themes**: 3 themes with 8 variants + transparency toggle
-- **File Management**: nvim-tree + Oil.nvim
-- **Enhanced Navigation**: Harpoon 2, Leap motion, Snacks picker
-- **Smart Completion**: nvim-cmp with multiple sources and snippets
+- **LSP**: Language servers via Mason
+- **AI**: GitHub Copilot + Avante.nvim (GPT-4o/Claude)
+- **Debug**: DAP for Go, Rust, Ruby
+- **Testing**: Neotest (Jest, RSpec, Go, Rust)
+- **Git**: Gitsigns, Diffview, Gitlinker
+- **Formatting/Linting**: Conform + nvim-lint
+- **Themes**: 3 themes, 8 variants, transparency toggle
+- **Files**: nvim-tree + Oil.nvim
+- **Navigation**: Harpoon 2, Leap, Snacks picker
+- **Completion**: nvim-cmp
 
 ## System Requirements
 
-- **Neovim**: ≥ 0.11.0 (uses modern LSP features)
+- **Neovim**: ≥ 0.11.0
 - **Nerd Font**: For proper icon display
 
 ## External Dependencies
@@ -85,17 +85,12 @@ nvim
 | **Python** | ✅ | ❌ | ✅ black/isort | ✅ | ❌ |
 | **Lua** | ✅ lua_ls | ❌ | ✅ stylua | ✅ | ❌ |
 
-### LSP Configuration Details
+### LSP Setup
 
-The configuration provides comprehensive LSP support with these key features:
-
-- **Automatic Server Installation**: Mason auto-installs and manages language servers
-- **Enhanced Capabilities**: nvim-cmp integration for better completions
-- **Custom Keymaps**: `ga` for code actions, `grl` for diagnostics
-- **Language-Specific Setup**: 
-  - **Go**: Full LSP with gopls, custom run commands
-  - **Rust**: rust-analyzer with enhanced settings
-  - **Ruby**: ruby-lsp integration with Rails support
+- Mason auto-installs language servers
+- nvim-cmp integration
+- Keymaps: `ga` (code actions), `grl` (diagnostics)
+- Language-specific configs for Go, Rust, Ruby
 
 ## Configuration Structure
 
@@ -151,4 +146,3 @@ export ANTHROPIC_API_KEY="your-key"
 
 ---
 
-This configuration provides a complete, modern development environment optimized for multi-language programming with comprehensive tooling, AI assistance, and beautiful themes.

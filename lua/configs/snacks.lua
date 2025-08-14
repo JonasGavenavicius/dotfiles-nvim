@@ -24,7 +24,6 @@ M.config = function(_, opts)
   local picker = require("snacks").picker
   local todo = require("todo-comments")
 
-  -- Core file operations
   map("n", "<leader>ff", picker.files, { desc = "Find Files" })
   map("n", "<leader>fg", function() picker.grep({ regex = false }) end, { desc = "Grep (Literal)" })
   map("n", "<leader>fr", picker.grep, { desc = "Grep (Regex)" })
@@ -35,11 +34,9 @@ M.config = function(_, opts)
     picker.qflist()
   end, { desc = "Todos (via qflist)" })
 
-  -- Git operations
   map("n", "<leader>gt", picker.git_status, { desc = "Git Status" })
   map("n", "<leader>gs", picker.git_log, { desc = "Git Log" })
 
-  -- LSP operations
   map("n", "grr", picker.lsp_references, { desc = "LSP References" })
   map("n", "gri", picker.lsp_implementations, { desc = "LSP Implementations" })
   map("n", "grh", picker.lsp_symbols, { desc = "LSP Document Symbols" })

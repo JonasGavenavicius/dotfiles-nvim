@@ -1,13 +1,12 @@
 local M = {
   "nvim-neotest/neotest",
   lazy = true,
-  commit = "747775fc22dfeb6102bdde6559ccb5126dac0ff8", -- Pin to specific stable version
+  commit = "747775fc22dfeb6102bdde6559ccb5126dac0ff8",
   dependencies = {
     "nvim-neotest/nvim-nio",
     "nvim-lua/plenary.nvim",
     "antoinemadec/FixCursorHold.nvim",
     "nvim-treesitter/nvim-treesitter",
-    -- Runners
     "nvim-neotest/neotest-jest",
     "rouge8/neotest-rust",
     "nvim-neotest/neotest-vim-test",
@@ -20,13 +19,11 @@ M.config = function()
   local neotest = require("neotest")
   neotest.setup({
     log_level = vim.log.levels.DEBUG,
-    -- Performance optimizations for large codebases
     discovery = {
-      enabled = false, -- Disable automatic test discovery
+      enabled = false,
     },
-    -- Only load tests when explicitly requested, not on startup
     status = {
-      enabled = false, -- Disable status signs by default
+      enabled = true,
     },
     adapters = {
       require("neotest-jest"),
