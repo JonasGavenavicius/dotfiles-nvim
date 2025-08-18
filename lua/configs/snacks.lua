@@ -43,6 +43,43 @@ M.config = function(_, opts)
   map("n", "grdd", picker.lsp_definitions, { desc = "LSP Definitions" })
   map("n", "grdt", picker.lsp_type_definitions, { desc = "LSP Type Definitions" })
   map("n", "<leader>fd", picker.diagnostics, { desc = "LSP Diagnostics" })
+
+  -- Local directory search
+  local function get_current_dir()
+    -- Check if we're in oil.nvim
+    if vim.bo.filetype == "oil" then
+      return require("oil").get_current_dir()
+    else
+      return vim.fn.expand("%:p:h")
+    end
+  end
+
+  map("n", "<leader>flf", function()
+    local current_dir = get_current_dir()
+    if current_dir then
+      picker.files({ cwd = current_dir })
+    else
+      vim.notify("Could not determine current directory", vim.log.levels.WARN)
+    end
+  end, { desc = "Find Files (Current Dir)" })
+  
+  map("n", "<leader>flg", function()
+    local current_dir = get_current_dir()
+    if current_dir then
+      picker.grep({ cwd = current_dir, regex = false })
+    else
+      vim.notify("Could not determine current directory", vim.log.levels.WARN)
+    end
+  end, { desc = "Grep Literal (Current Dir)" })
+  
+  map("n", "<leader>flr", function()
+    local current_dir = get_current_dir()
+    if current_dir then
+      picker.grep({ cwd = current_dir })
+    else
+      vim.notify("Could not determine current directory", vim.log.levels.WARN)
+    end
+  end, { desc = "Grep Regex (Current Dir)" })
 end
 
 return M

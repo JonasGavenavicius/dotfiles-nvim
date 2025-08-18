@@ -24,6 +24,7 @@ local M = {
             { "<leader>d", group = "Debug" },
             { "<leader>e", group = "Explorer" },
             { "<leader>f", group = "Find" },
+            { "<leader>fl", group = "Search in Local Directory" },
             { "<leader>g", group = "Git" },
             { "<leader>h", group = "Harpoon" },
             { "<leader>l", group = "LSP/Lint" },

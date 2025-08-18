@@ -34,6 +34,13 @@
 | `<leader>fd` | LSP Diagnostics | Snacks |
 | `<leader>fh` | Open harpoon picker | Harpoon |
 
+### Local Directory Search (`<leader>fl`)
+| Key | Action | Plugin |
+|-----|--------|--------|
+| `<leader>flf` | Find Files (Current Dir) | Snacks |
+| `<leader>flg` | Grep Literal (Current Dir) | Snacks |
+| `<leader>flr` | Grep Regex (Current Dir) | Snacks |
+
 ---
 
 ## 🗂️ File Explorers (`<leader>e` - Explorer)
