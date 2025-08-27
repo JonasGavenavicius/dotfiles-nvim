@@ -63,24 +63,6 @@
 | `<leader>sg` | Replace in all args (confirm each) | Normal |
 | `<leader>sG` | Replace in all args (no confirm) | Normal |
 
-### Spectre (Advanced Search/Replace)
-| Key | Action | Mode |
-|-----|--------|------|
-| `<leader>sR` | Toggle Spectre | Normal |
-| `<leader>sw` | Replace current word/selection | Normal/Visual |
-| `<leader>sf` | Replace in file | Normal |
-
-#### Spectre Internal Mappings
-| Key | Action | Context |
-|-----|--------|---------|
-| `dd` | Toggle current item | Spectre buffer |
-| `<cr>` | Go to current file | Spectre buffer |
-| `<leader>q` | Send all items to quickfix | Spectre buffer |
-| `<leader>c` | Input replace command | Spectre buffer |
-| `<leader>o` | Show options | Spectre buffer |
-| `<leader>rc` | Replace current line | Spectre buffer |
-| `<leader>R` | Replace all | Spectre buffer |
-
 ---
 
 ## 🎯 Navigation & Motion

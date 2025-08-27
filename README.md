@@ -38,8 +38,7 @@ nvim
 - **git**: Version control (gitsigns, diffview, gitlinker)
 - **curl/wget**: Package downloads (Mason)
 - **unzip, tar, gzip**: Archive extraction (Mason)
-- **ripgrep**: Fast searching (Snacks picker, Spectre)
-- **sed**: Text processing (Spectre)
+- **ripgrep**: Fast searching (Snacks picker)
 - **make**: Building native extensions (Avante.nvim)
 - **Node.js**: JavaScript ecosystem tools (various formatters/linters)
 
