@@ -228,15 +228,15 @@
 |-----|--------|--------|
 | `<leader>gd` | Git Diffview | Diffview |
 | `<leader>gh` | Git File History | Diffview |
-| `<leader>gld` | Toggle Word Diff | Gitsigns |
+| `<leader>gwd` | Toggle Word Diff | Gitsigns |
 | `<leader>gt` | Git Status | Snacks |
 | `<leader>gs` | Git Log | Snacks |
 
 ### GitHub Integration
 | Key | Action | Plugin |
 |-----|--------|--------|
-| `<leader>gy` | Copy GitHub link to current line | Gitlinker |
-| `<leader>gb` | Open GitHub link in browser | Gitlinker |
+| `<leader>gly` | Copy GitHub link to current line | Gitlinker |
+| `<leader>glb` | Open GitHub link in browser | Gitlinker |
 
 ---
 

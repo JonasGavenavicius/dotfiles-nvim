@@ -38,7 +38,7 @@ local M = {
         
         map("n", "<leader>ghu", gs.undo_stage_hunk, { buffer = bufnr, desc = "Undo stage hunk" })
         
-        map("n", "<leader>gld", gs.toggle_word_diff, { buffer = bufnr, desc = "Toggle word diff" })
+        map("n", "<leader>gwd", gs.toggle_word_diff, { buffer = bufnr, desc = "Toggle word diff" })
       end,
     }
   end

@@ -7,7 +7,7 @@ return {
     require("gitlinker").setup()
   end,
   keys = {
-    { "<leader>gy", "<cmd>GitLink<CR>", desc = "Copy GitHub link to current line" },
-    { "<leader>gb", "<cmd>GitLink!<CR>", desc = "Open GitHub link in browser" },
+    { "<leader>gly", "<cmd>GitLink<CR>", desc = "Copy GitHub link to current line" },
+    { "<leader>glb", "<cmd>GitLink!<CR>", desc = "Open GitHub link in browser" },
   },
 }
