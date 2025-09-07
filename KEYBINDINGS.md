@@ -30,7 +30,7 @@
 | `<leader>fr` | Grep (Regex) | Snacks |
 | `<leader>fb` | Buffers | Snacks |
 | `<leader>fH` | Help Tags | Snacks |
-| `<leader>fT` | Todos (via qflist) | Snacks |
+| `<leader>ft` | Todos | Snacks |
 | `<leader>fd` | LSP Diagnostics | Snacks |
 | `<leader>fh` | Open harpoon picker | Harpoon |
 
