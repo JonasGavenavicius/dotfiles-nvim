@@ -7,8 +7,8 @@
 .nvimlog
 
 # Plugin manager cache
-lazy-lock.json.bak
-lazy-lock.json
+*lazy-lock.json.bak
+*lazy-lock.json
 
 # IDE Files  
 .idea/

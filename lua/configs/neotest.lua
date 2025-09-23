@@ -1,7 +1,7 @@
 local M = {
   "nvim-neotest/neotest",
   lazy = true,
-  commit = "747775fc22dfeb6102bdde6559ccb5126dac0ff8",
+  -- commit = "747775fc22dfeb6102bdde6559ccb5126dac0ff8",
   dependencies = {
     "nvim-neotest/nvim-nio",
     "nvim-lua/plenary.nvim",
@@ -11,7 +11,8 @@ local M = {
     "rouge8/neotest-rust",
     "nvim-neotest/neotest-vim-test",
     "fredrikaverpil/neotest-golang",
-    { "olimorris/neotest-rspec", commit = "281c0ed0e55d623e8028796e1c4dc27b7e421fd0" },
+    -- { "olimorris/neotest-rspec", commit = "281c0ed0e55d623e8028796e1c4dc27b7e421fd0" },
+    { "olimorris/neotest-rspec" },
   },
 }
 

@@ -6,7 +6,6 @@ return {
       inlay_hints = { enabled = true },
     },
     config = function()
-      local lspconfig = require("lspconfig")
       local util = require("lspconfig.util")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
       
@@ -115,31 +114,37 @@ return {
       end
 
       -- gopls
-      lspconfig.gopls.setup({
+      vim.lsp.config.gopls = {
         capabilities = capabilities,
         on_attach = on_attach,
-      })
+        cmd = { "gopls" },
+        filetypes = { "go", "gomod", "gowork", "gotmpl" },
+        root_markers = { "go.mod", ".git" },
+      }
 
       -- rust_analyzer
-      lspconfig.rust_analyzer.setup({
+      vim.lsp.config.rust_analyzer = {
         capabilities = capabilities,
         on_attach = on_attach,
+        cmd = { "rust-analyzer" },
+        filetypes = { "rust" },
+        root_markers = { "Cargo.toml", ".git" },
         settings = {
           ["rust-analyzer"] = {
             cargo = { allFeatures = true },
             check = { command = "clippy" },
           },
         },
-      })
+      }
 
       -- ruby_lsp
-      lspconfig.ruby_lsp.setup({
+      vim.lsp.config.ruby_lsp = {
         capabilities = capabilities,
         on_attach = on_attach,
         cmd = { "ruby-lsp" },
         filetypes = { "ruby" },
-        root_dir = util.root_pattern("Gemfile", ".git"),
-      })
+        root_markers = { "Gemfile", ".git" },
+      }
     end,
   },
 }
