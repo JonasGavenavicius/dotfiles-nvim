@@ -11,7 +11,7 @@ local M = {
     "rouge8/neotest-rust",
     "nvim-neotest/neotest-vim-test",
     "fredrikaverpil/neotest-golang",
-    -- { "olimorris/neotest-rspec", commit = "281c0ed0e55d623e8028796e1c4dc27b7e421fd0" },
+    { "olimorris/neotest-rspec", commit = "281c0ed0e55d623e8028796e1c4dc27b7e421fd0" },
     { "olimorris/neotest-rspec" },
   },
 }
@@ -28,7 +28,6 @@ M.config = function()
     },
     adapters = {
       require("neotest-jest"),
-      -- require('rustaceanvim.neotest'),
       require("neotest-rust"),
       require("neotest-vim-test")({
         ignore_file_types = { "python", "vim", "lua" },

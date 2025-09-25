@@ -113,22 +113,18 @@ return {
           { border = border })
       end
 
+      -- Setup LSP servers using modern vim.lsp.config API
+      
       -- gopls
       vim.lsp.config.gopls = {
         capabilities = capabilities,
         on_attach = on_attach,
-        cmd = { "gopls" },
-        filetypes = { "go", "gomod", "gowork", "gotmpl" },
-        root_markers = { "go.mod", ".git" },
       }
 
       -- rust_analyzer
       vim.lsp.config.rust_analyzer = {
         capabilities = capabilities,
         on_attach = on_attach,
-        cmd = { "rust-analyzer" },
-        filetypes = { "rust" },
-        root_markers = { "Cargo.toml", ".git" },
         settings = {
           ["rust-analyzer"] = {
             cargo = { allFeatures = true },
@@ -141,9 +137,6 @@ return {
       vim.lsp.config.ruby_lsp = {
         capabilities = capabilities,
         on_attach = on_attach,
-        cmd = { "ruby-lsp" },
-        filetypes = { "ruby" },
-        root_markers = { "Gemfile", ".git" },
       }
     end,
   },
