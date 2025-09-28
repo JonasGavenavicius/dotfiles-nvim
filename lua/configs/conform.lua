@@ -23,6 +23,8 @@ M.config = function()
                 go = { "gofumpt", "goimports", "goimports-reviser" },
                 terraform = { "terraform_fmt" },
                 python = { "isort", "black" },
+                ruby = { "rubocop" },
+                rust = { "rustfmt" },
             },
             format_on_save = {
                 lsp_fallback = true,

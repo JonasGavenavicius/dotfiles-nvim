@@ -15,6 +15,8 @@ return {
             svelte = { "eslint_d" },
             kotlin = { "ktlint" },
             terraform = { "tflint" },
+            ruby = { "rubocop" },
+            go = { "golangcilint" },
         }
 
         local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })

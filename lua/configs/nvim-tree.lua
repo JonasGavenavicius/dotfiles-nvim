@@ -2,9 +2,11 @@ local M = {
     "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" }, -- optional icons
     config = function()
+        local TREE_WIDTH = 60
+        
         require("nvim-tree").setup({
             view = {
-              width = 60,
+              width = TREE_WIDTH,
             },
             renderer = {
               group_empty = true,

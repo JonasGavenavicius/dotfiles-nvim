@@ -23,8 +23,11 @@ opt.fillchars = { eob = " " }
 opt.winborder = "rounded"
 opt.wrap = false
 opt.mouse = "a"
-opt.scrolloff = 10
-opt.sidescrolloff = 8
+local SCROLL_OFFSET = 10
+local SIDE_SCROLL_OFFSET = 8
+
+opt.scrolloff = SCROLL_OFFSET
+opt.sidescrolloff = SIDE_SCROLL_OFFSET
 
 -- STARTUP -------------------------------------------------------------------
 
@@ -49,7 +52,9 @@ opt.incsearch = true
 
 opt.splitright = true
 opt.splitbelow = true
-opt.timeoutlen = 400
+local TIMEOUT_LEN = 400
+
+opt.timeoutlen = TIMEOUT_LEN
 opt.whichwrap:append("<>[]hl")
 
 -- FILE HANDLING -------------------------------------------------------------
@@ -58,11 +63,15 @@ opt.clipboard = "unnamedplus"
 opt.undofile = true
 opt.autoread = true
 opt.autowrite = false
-opt.updatetime = 250
+local UPDATE_TIME = 250
+local REDRAW_TIME = 10000     -- Allow up to 10s to render/redraw heavy buffers
+local MAX_MEM_PATTERN = 20000  -- Allow up to 20MB for regex/syntax pattern matching
+
+opt.updatetime = UPDATE_TIME
 
 -- PERFORMANCE --------------------------------------------------------------
-opt.redrawtime = 10000     -- Allow up to 10s to render/redraw heavy buffers
-opt.maxmempattern = 20000  -- Allow up to 20MB for regex/syntax pattern matching
+opt.redrawtime = REDRAW_TIME
+opt.maxmempattern = MAX_MEM_PATTERN
 
 -- DIAGNOSTICS ---------------------------------------------------------------
 

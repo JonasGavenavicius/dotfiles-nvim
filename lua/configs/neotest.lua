@@ -90,8 +90,9 @@ M.config = function()
     test_term:toggle()
   end
 
-  vim.keymap.set("n", "<leader>trn", RunNearestTestInTerminal, { desc = "Run nearest ruby test in terminal" })
-  vim.keymap.set("n", "<leader>trk", function()
+  local map = vim.keymap.set
+  map("n", "<leader>trn", RunNearestTestInTerminal, { desc = "Run nearest ruby test in terminal" })
+  map("n", "<leader>trk", function()
     vim.fn.jobstart({ "pkill", "-f", "rspec" }, {
       on_exit = function()
         print("Killed all rspec processes.")
@@ -100,7 +101,7 @@ M.config = function()
   end, { desc = "Kill all running RSpec tests" })
   
   -- Debug function to check adapter detection
-  vim.keymap.set("n", "<leader>trd", function()
+  map("n", "<leader>trd", function()
     local current_file = vim.fn.expand("%:p")
     print("Current file: " .. current_file)
     print("File type: " .. vim.bo.filetype)
@@ -110,9 +111,9 @@ M.config = function()
     print("Has Ruby treesitter parser: " .. tostring(has_parser))
     
     -- Try to get neotest adapters
-    local ok, neotest = pcall(require, "neotest")
+    local ok, neotest_debug = pcall(require, "neotest")
     if ok then
-      local tree = neotest.state.positions()
+      local tree = neotest_debug.state.positions()
       if tree then
         print("Neotest tree exists - tests should be detected")
       else
@@ -124,35 +125,38 @@ M.config = function()
   end, { desc = "Debug neotest adapter detection" })
   
   -- Manual discovery commands for better control (using <leader>ts prefix for "test scan")
-  vim.keymap.set("n", "<leader>tsf", function()
-    require("neotest").run.run(vim.fn.expand("%"))
+  map("n", "<leader>tsf", function()
+    neotest.run.run(vim.fn.expand("%"))
     vim.notify("Discovered tests in current file", vim.log.levels.INFO)
   end, { desc = "Discover tests in current file" })
   
-  vim.keymap.set("n", "<leader>tsd", function() 
+  map("n", "<leader>tsd", function() 
     local current_dir = vim.fn.expand("%:p:h")
-    require("neotest").run.run(current_dir)
+    neotest.run.run(current_dir)
     vim.notify("Discovered tests in current directory", vim.log.levels.INFO)
   end, { desc = "Discover tests in current directory" })
   
-  vim.keymap.set("n", "<leader>tsp", function()
+  map("n", "<leader>tsp", function()
     -- Find project root and discover all tests
     local project_root = vim.fn.getcwd()
     vim.notify("Discovering all tests in project (this may take a while)...", vim.log.levels.WARN)
-    require("neotest").run.run(project_root)
+    neotest.run.run(project_root)
     vim.notify("Discovered all tests in project", vim.log.levels.INFO)
   end, { desc = "Discover all tests in project" })
 end
 
-M.keys = {
-  { "<leader>tn", function() require("neotest").run.run() end,                     desc = "Run nearest test" },
-  { "<leader>td", function() require("neotest").run.run({ strategy = "dap" }) end, desc = "Run nearest test debug" },
-  { "<leader>tf", function() require("neotest").run.run(vim.fn.expand("%")) end,   desc = "Run file tests" },
-  { "<leader>ta", function() require("neotest").run.run({ suite = true }) end,     desc = "Run test suite" },
-  { "<leader>tl", function() require("neotest").run.run_last() end,                desc = "Run last test" },
-  { "<leader>tk", function() require("neotest").run.stop() end,                    desc = "Stop test" },
-  { "<leader>to", function() require("neotest").output.open({ enter = true }) end, desc = "Show test output" },
-  { "<leader>tt", function() require("neotest").summary.toggle() end,              desc = "Toggle test summary" },
-}
+M.keys = function()
+  local neotest = require("neotest")
+  return {
+    { "<leader>tn", function() neotest.run.run() end,                     desc = "Run nearest test" },
+    { "<leader>td", function() neotest.run.run({ strategy = "dap" }) end, desc = "Run nearest test debug" },
+    { "<leader>tf", function() neotest.run.run(vim.fn.expand("%")) end,   desc = "Run file tests" },
+    { "<leader>ta", function() neotest.run.run({ suite = true }) end,     desc = "Run test suite" },
+    { "<leader>tl", function() neotest.run.run_last() end,                desc = "Run last test" },
+    { "<leader>tk", function() neotest.run.stop() end,                    desc = "Stop test" },
+    { "<leader>to", function() neotest.output.open({ enter = true }) end, desc = "Show test output" },
+    { "<leader>tt", function() neotest.summary.toggle() end,              desc = "Toggle test summary" },
+  }
+end
 
 return M

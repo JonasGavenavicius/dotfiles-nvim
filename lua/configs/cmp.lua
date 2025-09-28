@@ -19,26 +19,27 @@ return {
         config = function()
             local cmp = require("cmp")
             local lspkind = require("lspkind")
+            local luasnip = require("luasnip")
 
             -- Load snippets from various sources
-            require("luasnip.loaders.from_vscode").lazy_load()
-            require("luasnip.loaders.from_vscode").lazy_load { exclude = vim.g.vscode_snippets_exclude or {} }
-            require("luasnip.loaders.from_vscode").lazy_load { paths = vim.g.vscode_snippets_path or "" }
+            luasnip.loaders.from_vscode.lazy_load()
+            luasnip.loaders.from_vscode.lazy_load { exclude = vim.g.vscode_snippets_exclude or {} }
+            luasnip.loaders.from_vscode.lazy_load { paths = vim.g.vscode_snippets_path or "" }
             
-            require("luasnip.loaders.from_snipmate").load()
-            require("luasnip.loaders.from_snipmate").lazy_load { paths = vim.g.snipmate_snippets_path or "" }
+            luasnip.loaders.from_snipmate.load()
+            luasnip.loaders.from_snipmate.lazy_load { paths = vim.g.snipmate_snippets_path or "" }
             
-            require("luasnip.loaders.from_lua").load()
-            require("luasnip.loaders.from_lua").lazy_load { paths = vim.g.lua_snippets_path or "" }
+            luasnip.loaders.from_lua.load()
+            luasnip.loaders.from_lua.lazy_load { paths = vim.g.lua_snippets_path or "" }
             
             -- Auto-unlink snippet nodes on leaving insert mode
             vim.api.nvim_create_autocmd("InsertLeave", {
                 callback = function()
                     if
-                        require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
-                        and not require("luasnip").session.jump_active
+                        luasnip.session.current_nodes[vim.api.nvim_get_current_buf()]
+                        and not luasnip.session.jump_active
                     then
-                        require("luasnip").unlink_current()
+                        luasnip.unlink_current()
                     end
                 end,
             })
@@ -60,7 +61,7 @@ return {
                 },
                 snippet = {
                     expand = function(args)
-                        require("luasnip").lsp_expand(args.body)
+                        luasnip.lsp_expand(args.body)
                     end,
                 },
                 window = {
@@ -81,8 +82,8 @@ return {
                     ["<Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_next_item()
-                        elseif require("luasnip").expand_or_jumpable() then
-                            require("luasnip").expand_or_jump()
+                        elseif luasnip.expand_or_jumpable() then
+                            luasnip.expand_or_jump()
                         else
                             fallback()
                         end
@@ -90,8 +91,8 @@ return {
                     ["<S-Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_prev_item()
-                        elseif require("luasnip").jumpable(-1) then
-                            require("luasnip").jump(-1)
+                        elseif luasnip.jumpable(-1) then
+                            luasnip.jump(-1)
                         else
                             fallback()
                         end
