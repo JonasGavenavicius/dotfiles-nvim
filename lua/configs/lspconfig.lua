@@ -9,90 +9,12 @@ return {
       local util = require("lspconfig.util")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
       
-      -- Program execution utilities
-      local M = {}
+      -- Use terminal utilities module
+      local terminal_utils = require("utils.terminal")
       
-      -- Default run commands for different file types
-      M.run_commands = {
-        go = function(file) return "go run " .. vim.fn.shellescape(file) end,
-        rust = function(_) return "cargo run" end,
-        ruby = function(file) return "bundle exec ruby " .. vim.fn.shellescape(file) end,
-        python = function(file) return "python " .. vim.fn.shellescape(file) end,
-        javascript = function(file) return "node " .. vim.fn.shellescape(file) end,
-        typescript = function(file) return "tsx " .. vim.fn.shellescape(file) end,
-        lua = function(file) return "lua " .. vim.fn.shellescape(file) end,
-      }
-      
-      -- Create or reuse terminal for running programs
-      M.get_run_terminal = function()
-        if _RUN_TERM == nil then
-          local Terminal = require("toggleterm.terminal").Terminal
-          _RUN_TERM = Terminal:new({
-            direction = "float",
-            close_on_exit = false,
-            on_exit = function() _RUN_TERM = nil end,
-          })
-        end
-        return _RUN_TERM
-      end
-      
-      -- Run current file with default command
-      M.run_current_file = function()
-        local file = vim.fn.expand("%:p")
-        if file == "" or not vim.fn.filereadable(file) then
-          vim.notify("No valid file to run", vim.log.levels.WARN)
-          return
-        end
-        
-        local ft = vim.bo.filetype
-        local command_fn = M.run_commands[ft]
-        if not command_fn then
-          vim.notify("Unsupported filetype: " .. ft, vim.log.levels.WARN)
-          return
-        end
-
-        local cmd = command_fn(file)
-        -- Add pause after execution
-        cmd = cmd .. [[; echo ""; read -n 1 -s -r -p "Press any key to close..."]]
-
-        local terminal = M.get_run_terminal()
-        terminal.cmd = cmd
-        terminal:toggle()
-      end
-      
-      -- Run program with custom arguments
-      M.run_with_arguments = function()
-        local file = vim.fn.expand("%:p")
-        if file == "" or not vim.fn.filereadable(file) then
-          vim.notify("No valid file to run", vim.log.levels.WARN)
-          return
-        end
-        
-        local ft = vim.bo.filetype
-        local command_fn = M.run_commands[ft]
-        if not command_fn then
-          vim.notify("Unsupported filetype: " .. ft, vim.log.levels.WARN)
-          return
-        end
-        
-        local default_cmd = command_fn(file)
-        
-        vim.ui.input({
-          prompt = "Run command: ",
-          default = default_cmd .. " ",
-        }, function(command)
-          if command and command ~= "" then
-            local terminal = M.get_run_terminal()
-            -- Add pause after execution
-            terminal.cmd = command .. [[; echo ""; read -n 1 -s -r -p "Press any key to close..."]]
-            terminal:toggle()
-          end
-        end)
-      end
-
       -- Set up keymaps
-      vim.keymap.set("n", "<leader>rf", M.run_current_file, { desc = "Run current file" })
-      vim.keymap.set("n", "<leader>rc", M.run_with_arguments, { desc = "Run current file with custom arguments" })
+      vim.keymap.set("n", "<leader>rf", terminal_utils.run_current_file, { desc = "Run current file" })
+      vim.keymap.set("n", "<leader>rc", terminal_utils.run_with_arguments, { desc = "Run current file with custom arguments" })
 
       local on_attach = function(_, bufnr)
         local opts = function(desc)
@@ -113,16 +35,52 @@ return {
           { border = border })
       end
 
-      -- Setup LSP servers using modern vim.lsp.config API
+      -- Setup LSP servers using official vim.lsp.config API
       
-      -- gopls
-      vim.lsp.config.gopls = {
+      -- lua_ls (Lua Language Server)
+      vim.lsp.config('lua_ls', {
+        cmd = { 'lua-language-server' },
+        filetypes = { 'lua' },
+        root_markers = { '.luarc.json', '.luarc.jsonc', '.git' },
         capabilities = capabilities,
         on_attach = on_attach,
-      }
+        settings = {
+          Lua = {
+            runtime = {
+              version = "LuaJIT",
+            },
+            workspace = {
+              checkThirdParty = false,
+              library = {
+                vim.env.VIMRUNTIME,
+                "${3rd}/luv/library",
+                "${3rd}/busted/library",
+              },
+            },
+            completion = {
+              callSnippet = "Replace",
+            },
+            diagnostics = {
+              globals = { "vim" },
+            },
+          },
+        },
+      })
 
-      -- rust_analyzer
-      vim.lsp.config.rust_analyzer = {
+      -- gopls (Go Language Server)
+      vim.lsp.config('gopls', {
+        cmd = { 'gopls' },
+        filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
+        root_markers = { 'go.work', 'go.mod', '.git' },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      -- rust_analyzer (Rust Language Server)
+      vim.lsp.config('rust_analyzer', {
+        cmd = { 'rust-analyzer' },
+        filetypes = { 'rust' },
+        root_markers = { 'Cargo.toml', 'rust-project.json', '.git' },
         capabilities = capabilities,
         on_attach = on_attach,
         settings = {
@@ -131,13 +89,42 @@ return {
             check = { command = "clippy" },
           },
         },
-      }
+      })
 
-      -- ruby_lsp
-      vim.lsp.config.ruby_lsp = {
+      -- ruby_lsp (Ruby Language Server)
+      vim.lsp.config('ruby_lsp', {
+        cmd = { 'ruby-lsp' },
+        filetypes = { 'ruby' },
+        root_markers = { 'Gemfile', '.git' },
         capabilities = capabilities,
         on_attach = on_attach,
-      }
+      })
+
+      -- jsonls (JSON Language Server)
+      vim.lsp.config('jsonls', {
+        cmd = { 'vscode-json-language-server', '--stdio' },
+        filetypes = { 'json', 'jsonc' },
+        root_markers = { '.git' },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      -- terraformls (Terraform Language Server)
+      vim.lsp.config('terraformls', {
+        cmd = { 'terraform-ls', 'serve' },
+        filetypes = { 'terraform', 'tf' },
+        root_markers = { '.terraform', '.git' },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+      
+      -- Enable each configured server
+      vim.lsp.enable('lua_ls')
+      vim.lsp.enable('gopls')
+      vim.lsp.enable('rust_analyzer')
+      vim.lsp.enable('ruby_lsp')
+      vim.lsp.enable('jsonls')
+      vim.lsp.enable('terraformls')
     end,
   },
 }

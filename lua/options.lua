@@ -55,7 +55,7 @@ opt.splitbelow = true
 local TIMEOUT_LEN = 400
 
 opt.timeoutlen = TIMEOUT_LEN
-opt.whichwrap:append("<>[]hl")
+opt.whichwrap:append("<>[]")
 
 -- FILE HANDLING -------------------------------------------------------------
 
@@ -63,9 +63,12 @@ opt.clipboard = "unnamedplus"
 opt.undofile = true
 opt.autoread = true
 opt.autowrite = false
+-- Time in ms for CursorHold event and swap file writes (default 4000ms, reduced for faster LSP/diagnostics)
 local UPDATE_TIME = 250
-local REDRAW_TIME = 10000     -- Allow up to 10s to render/redraw heavy buffers
-local MAX_MEM_PATTERN = 20000  -- Allow up to 20MB for regex/syntax pattern matching
+-- Max time in ms for syntax highlighting/redrawing (prevents freezing on large/complex files)
+local REDRAW_TIME = 10000
+-- Max memory in KB for pattern matching (prevents OOM on pathological regex patterns)
+local MAX_MEM_PATTERN = 20000
 
 opt.updatetime = UPDATE_TIME
 

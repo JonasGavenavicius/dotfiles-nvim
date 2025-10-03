@@ -6,9 +6,12 @@ local transparency_enabled = false
 -- Theme-specific transparency configurations
 local function configure_theme_transparency(theme_cmd, transparent)
     if theme_cmd:match("catppuccin") then
-        require("catppuccin").setup({
-            transparent_background = transparent,
-        })
+        local ok, catppuccin = pcall(require, "catppuccin")
+        if ok then
+            catppuccin.setup({
+                transparent_background = transparent,
+            })
+        end
     elseif theme_cmd:match("gruvbox") then
         if transparent then
             vim.g.gruvbox_transparent_bg = 1
@@ -16,11 +19,14 @@ local function configure_theme_transparency(theme_cmd, transparent)
             vim.g.gruvbox_transparent_bg = 0
         end
     elseif theme_cmd:match("rose-pine") then
-        require("rose-pine").setup({
-            styles = {
-                transparency = transparent,
-            },
-        })
+        local ok, rose_pine = pcall(require, "rose-pine")
+        if ok then
+            rose_pine.setup({
+                styles = {
+                    transparency = transparent,
+                },
+            })
+        end
     end
 end
 

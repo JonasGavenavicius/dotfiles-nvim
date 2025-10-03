@@ -1,7 +1,7 @@
 local M = {
   "nvim-neotest/neotest",
   lazy = true,
-  -- commit = "747775fc22dfeb6102bdde6559ccb5126dac0ff8",
+  commit = "747775fc22dfeb6102bdde6559ccb5126dac0ff8",
   dependencies = {
     "nvim-neotest/nvim-nio",
     "nvim-lua/plenary.nvim",

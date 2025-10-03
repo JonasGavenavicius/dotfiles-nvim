@@ -16,7 +16,7 @@ return {
             kotlin = { "ktlint" },
             terraform = { "tflint" },
             ruby = { "rubocop" },
-            go = { "golangcilint" },
+            go = { "golangci_lint" },
         }
 
         local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })

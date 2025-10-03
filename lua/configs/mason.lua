@@ -22,9 +22,9 @@ function M.config()
     ensure_installed = M.servers,
     automatic_installation = true,
     handlers = {
-      -- Default handler will be overridden by manual lspconfig.setup calls
+      -- Disable automatic server setup - we configure manually in lspconfig.lua
       function(server_name)
-        -- This ensures servers are installed but we configure them manually in lspconfig.lua
+        -- Do nothing - prevents automatic server initialization
       end,
     },
   })

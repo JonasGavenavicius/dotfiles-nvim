@@ -34,8 +34,8 @@ local function replace_cmd(scope, confirm)
                 if not source or source == "" then return end
                 vim.ui.input({ prompt = "Replace with: " }, function(target)
                     if not target then return end
-                    source = vim.fn.escape(source, "/\\[].*^$~")
-                    target = vim.fn.escape(target, "\\&")
+                    source = vim.fn.escape(source, "/")
+                    target = vim.fn.escape(target, "/&")
                     local flags = confirm and "gc" or "g"
                     local cmd = (scope == "%") and string.format("%%s/%s/%s/%s", source, target, flags)
                         or string.format("argdo %%s/%s/%s/%s | update", source, target, flags)

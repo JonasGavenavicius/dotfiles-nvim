@@ -26,14 +26,12 @@ autocmd({ "UIEnter", "BufReadPost", "BufNewFile" }, {
       api.nvim_exec_autocmds("User", { pattern = "FilePost", modeline = false })
       api.nvim_del_augroup_by_name("NvFilePost")
 
-      -- Defer FileType and EditorConfig handling
-      vim.schedule(function()
-        api.nvim_exec_autocmds("FileType", {})
-
-        if vim.g.editorconfig then
+      -- Defer EditorConfig handling
+      if vim.g.editorconfig then
+        vim.schedule(function()
           require("editorconfig").config(buf)
-        end
-      end)
+        end)
+      end
     end
   end,
 })

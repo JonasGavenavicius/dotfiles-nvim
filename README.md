@@ -1,6 +1,6 @@
 # Neovim Configuration
 
-Neovim configuration with 43 plugins. Built with Lua and managed by [lazy.nvim](https://github.com/folke/lazy.nvim).
+Neovim configuration with 40+ plugins. Built with Lua and managed by [lazy.nvim](https://github.com/folke/lazy.nvim).
 
 ## Quick Installation
 
@@ -65,9 +65,6 @@ nvim
 #### Python
 - `black`, `isort`: Formatters (Conform)
 
-#### Lua
-- `stylua`: Formatter (Conform)
-
 ### AI Services
 - **GitHub Copilot**: Subscription + `:Copilot auth` (Copilot)
 - **OpenAI API**: `OPENAI_API_KEY` env var (Avante.nvim)
@@ -77,12 +74,12 @@ nvim
 
 | Language | LSP | Debug | Format | Lint | Test |
 |----------|-----|-------|--------|------|------|
-| **Go** | ✅ gopls | ✅ DAP | ✅ gofumpt | ✅ | ✅ Neotest |
+| **Go** | ✅ gopls | ✅ DAP | ✅ gofumpt | ✅ golangci_lint | ✅ Neotest |
 | **Rust** | ✅ rust-analyzer | ✅ codelldb | ✅ rustfmt | ✅ | ✅ Neotest |
-| **Ruby** | ✅ ruby-lsp | ✅ readapt | ✅ | ✅ | ✅ RSpec |
+| **Ruby** | ✅ ruby-lsp | ✅ readapt | ✅ rubocop | ✅ rubocop | ✅ RSpec |
 | **JavaScript/TS** | ✅ | ❌ | ✅ prettier | ✅ eslint_d | ✅ Jest |
-| **Python** | ✅ | ❌ | ✅ black/isort | ✅ | ❌ |
-| **Lua** | ✅ lua_ls | ❌ | ✅ stylua | ✅ | ❌ |
+| **Python** | ✅ | ❌ | ✅ black/isort | ❌ | ❌ |
+| **Lua** | ✅ lua_ls | ❌ | ❌ | ❌ | ❌ |
 
 ### LSP Setup
 
@@ -124,9 +121,23 @@ export ANTHROPIC_API_KEY="your-key"
 :Copilot auth
 ```
 
-### Theme Management  
+### Theme Management
 - `:ThemePicker`: Interactive theme selection
 - `:ToggleTransparency`: Toggle transparency
+
+### Formatting & Linting
+
+**Conform (Formatting)**
+- **Automatic**: Runs on every file save
+- **Manual**: `grb` in normal mode to format current buffer
+- **Command**: `:ConformInfo` to show configured formatters
+
+**nvim-lint (Linting)**
+- **Automatic**: Runs on file open, save, and leaving insert mode
+- **Manual**: `<leader>ll` to trigger linting for current file
+- **Command**: `:lua require("lint").try_lint()` to manually lint
+
+**Diagnostics sources**: LSP (always active) + nvim-lint (on triggers) appear in the same UI (gutter signs, virtual text, `:lua vim.diagnostic.open_float()`)
 
 ## Troubleshooting
 

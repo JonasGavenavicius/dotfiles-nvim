@@ -5,7 +5,10 @@ return {
         build = ":Copilot auth",
         event = "InsertEnter",
         config = function()
+            local copilot_node_command = vim.fn.executable("mise") == 1 and "/opt/homebrew/bin/node" or "node"
+
             require("copilot").setup({
+                copilot_node_command = copilot_node_command,
                 panel = {
                     enabled = true,
                     auto_refresh = true,
