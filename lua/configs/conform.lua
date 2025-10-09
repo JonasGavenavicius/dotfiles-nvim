@@ -24,7 +24,7 @@ M.config = function()
             ruby = { "rubocop" },
             rust = { "rustfmt" },
         },
-        format_on_save = {
+        format_after_save = {
             lsp_fallback = true,
             async = true,
             timeout_ms = 1000,
