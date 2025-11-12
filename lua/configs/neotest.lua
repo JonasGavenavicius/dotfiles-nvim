@@ -39,14 +39,9 @@ M.config = function()
         end,
         root_files = { "Gemfile", ".rspec", "spec" },
         filter_dirs = { ".git", "node_modules", "vendor", "tmp", "log", "public", "storage" },
-        -- Performance: Only discover tests for current file, not entire directory
+        -- Match RSpec test files (_spec.rb) while relying on filter_dirs for performance
         is_test_file = function(file_path)
-          -- Only consider files that are currently open or explicitly requested
-          local current_file = vim.fn.expand("%:p")
-          if file_path == current_file then
-            return file_path:match("_spec%.rb$") ~= nil
-          end
-          return false
+          return file_path:match("_spec%.rb$") ~= nil
         end,
         transform_spec_path = function(path)
           return path
@@ -99,17 +94,16 @@ M.config = function()
       end,
     })
   end, { desc = "Kill all running RSpec tests" })
-  
   -- Debug function to check adapter detection
   map("n", "<leader>trd", function()
     local current_file = vim.fn.expand("%:p")
     print("Current file: " .. current_file)
     print("File type: " .. vim.bo.filetype)
-    
+
     -- Check treesitter parser
     local has_parser = pcall(vim.treesitter.get_parser, 0, "ruby")
     print("Has Ruby treesitter parser: " .. tostring(has_parser))
-    
+
     -- Try to get neotest adapters
     local ok, neotest_debug = pcall(require, "neotest")
     if ok then
@@ -119,30 +113,124 @@ M.config = function()
       else
         print("No neotest tree found - no tests detected")
       end
+      print("")
+      print("Tip: Use <leader>tt to open test summary and discover tests")
     else
       print("Failed to load neotest")
     end
   end, { desc = "Debug neotest adapter detection" })
-  
-  -- Manual discovery commands for better control (using <leader>ts prefix for "test scan")
-  map("n", "<leader>tsf", function()
-    neotest.run.run(vim.fn.expand("%"))
-    vim.notify("Discovered tests in current file", vim.log.levels.INFO)
-  end, { desc = "Discover tests in current file" })
-  
-  map("n", "<leader>tsd", function() 
-    local current_dir = vim.fn.expand("%:p:h")
-    neotest.run.run(current_dir)
-    vim.notify("Discovered tests in current directory", vim.log.levels.INFO)
-  end, { desc = "Discover tests in current directory" })
-  
+
+  -- Manual scan commands that actually discover tests recursively
+  local function scan_for_tests(base_path, depth_description)
+    vim.notify("Scanning for tests in " .. depth_description .. "...", vim.log.levels.INFO)
+
+    -- Directories to exclude (matching neotest-rspec config)
+    local filter_dirs = { ".git", "node_modules", "vendor", "tmp", "log", "public", "storage" }
+
+    -- Find all spec files recursively
+    local spec_files = vim.fn.globpath(base_path, "**/*_spec.rb", false, true)
+
+    -- Filter out excluded directories
+    local filtered_files = {}
+    for _, file in ipairs(spec_files) do
+      local should_include = true
+      for _, excluded in ipairs(filter_dirs) do
+        if file:match("/" .. excluded .. "/") then
+          should_include = false
+          break
+        end
+      end
+      if should_include then
+        table.insert(filtered_files, file)
+      end
+    end
+
+    if #filtered_files == 0 then
+      vim.notify("No spec files found in " .. depth_description, vim.log.levels.WARN)
+      return
+    end
+
+    vim.notify(string.format("Found %d spec files, discovering tests...", #filtered_files), vim.log.levels.INFO)
+
+    -- Discover tests by reading each file (this triggers neotest's discovery)
+    local original_buf = vim.api.nvim_get_current_buf()
+    local discovered = 0
+
+    -- Process files in batches with progress updates
+    local batch_size = 50
+    for i, file in ipairs(filtered_files) do
+      -- Use badd to add buffer without displaying it, then trigger discovery
+      vim.cmd("badd " .. vim.fn.fnameescape(file))
+      local buf = vim.fn.bufnr(file)
+      if buf ~= -1 then
+        -- Trigger BufEnter event which causes neotest to discover positions
+        vim.api.nvim_buf_call(buf, function()
+          vim.cmd("doautocmd BufEnter")
+        end)
+        discovered = discovered + 1
+      end
+
+      -- Show progress every batch_size files
+      if i % batch_size == 0 then
+        local progress = math.floor((i / #filtered_files) * 100)
+        vim.notify(string.format("Progress: %d%% (%d/%d files)", progress, i, #filtered_files), vim.log.levels.INFO)
+        vim.cmd("redraw")
+      end
+    end
+
+    -- Return to original buffer
+    vim.api.nvim_set_current_buf(original_buf)
+
+    vim.notify(string.format("Discovered tests in %d files. Open summary (<leader>tt) to view.", discovered), vim.log.levels.INFO)
+  end
+
   map("n", "<leader>tsp", function()
-    -- Find project root and discover all tests
+    -- Find current package by walking up directory tree
+    local current_file = vim.fn.expand("%:p")
+    local current_dir = vim.fn.expand("%:p:h")
     local project_root = vim.fn.getcwd()
-    vim.notify("Discovering all tests in project (this may take a while)...", vim.log.levels.WARN)
-    neotest.run.run(project_root)
-    vim.notify("Discovered all tests in project", vim.log.levels.INFO)
-  end, { desc = "Discover all tests in project" })
+
+    -- Walk up looking for packages/[package_name] structure
+    local path = current_dir
+    local package_spec_dir = nil
+
+    while path:len() >= project_root:len() do
+      -- Check if we're inside a packages directory
+      local parent = vim.fn.fnamemodify(path, ":h")
+      local dirname = vim.fn.fnamemodify(path, ":t")
+
+      if vim.fn.fnamemodify(parent, ":t") == "packages" then
+        -- Found a package directory
+        local spec_path = path .. "/spec"
+        if vim.fn.isdirectory(spec_path) == 1 then
+          package_spec_dir = spec_path
+          break
+        end
+      end
+
+      -- Move up one directory
+      if path == parent then break end
+      path = parent
+    end
+
+    -- Use found package spec dir, or fallback to root spec
+    if package_spec_dir then
+      local package_name = vim.fn.fnamemodify(package_spec_dir:gsub("/spec$", ""), ":t")
+      scan_for_tests(package_spec_dir, "package '" .. package_name .. "' specs")
+    else
+      local root_spec = project_root .. "/spec"
+      if vim.fn.isdirectory(root_spec) == 1 then
+        scan_for_tests(root_spec, "root spec directory")
+      else
+        vim.notify("Not in a package and no root spec directory found", vim.log.levels.WARN)
+      end
+    end
+  end, { desc = "Scan current package tests" })
+
+  map("n", "<leader>tsd", function()
+    local current_dir = vim.fn.expand("%:p:h")
+    scan_for_tests(current_dir, "current directory")
+  end, { desc = "Scan directory for tests" })
 end
 
 M.keys = function()

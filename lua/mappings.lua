@@ -38,7 +38,7 @@ local function replace_cmd(scope, confirm)
                     target = vim.fn.escape(target, "/&")
                     local flags = confirm and "gc" or "g"
                     local cmd = (scope == "%") and string.format("%%s/%s/%s/%s", source, target, flags)
-                        or string.format("argdo %%s/%s/%s/%s | update", source, target, flags)
+                        or string.format("cfdo %%s/%s/%s/%s | update", source, target, flags)
                     vim.cmd(cmd)
                 end)
             end)
@@ -48,7 +48,7 @@ end
 -- Replace mappings
 map("n", "<leader>sS", replace_cmd("%", false), { desc = "Replace in buffer (no confirm)" })
 map("n", "<leader>ss", replace_cmd("%", true), { desc = "Replace in buffer (confirm each)" })
-map("n", "<leader>sG", replace_cmd("argdo", false), { desc = "Replace in all args (no confirm)" })
-map("n", "<leader>sg", replace_cmd("argdo", true), { desc = "Replace in all args (confirm each)" })
+map("n", "<leader>sG", replace_cmd("argdo", false), { desc = "Replace in quickfix files (no confirm)" })
+map("n", "<leader>sg", replace_cmd("argdo", true), { desc = "Replace in quickfix files (confirm each)" })
 
 
