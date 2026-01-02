@@ -52,10 +52,30 @@ function M.debug_go_smart()
       table.insert(items, display)
     end
 
+    -- Add custom path option
+    table.insert(items, "Enter custom path...")
+
     vim.ui.select(items, {
       prompt = "Select executable to debug:",
     }, function(choice, idx)
-      if choice and idx then
+      if not choice or not idx then
+        return
+      end
+
+      if idx == #items then
+        -- User selected "Enter custom path..."
+        vim.ui.input({
+          prompt = "Enter path to executable: ",
+          default = "",
+        }, function(path)
+          if path and path ~= "" then
+            start_debug({
+              name = vim.fn.fnamemodify(path, ":t"),
+              relative = path,
+            })
+          end
+        end)
+      else
         start_debug(executables[idx])
       end
     end)

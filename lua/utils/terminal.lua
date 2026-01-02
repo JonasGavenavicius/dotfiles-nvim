@@ -18,10 +18,31 @@ local function select_executable(executables, callback)
     table.insert(items, display)
   end
 
+  -- Add custom path option
+  table.insert(items, "Enter custom path...")
+
   vim.ui.select(items, {
     prompt = "Select executable:",
   }, function(choice, idx)
-    if choice and idx then
+    if not choice or not idx then
+      return
+    end
+
+    if idx == #items then
+      -- User selected "Enter custom path..."
+      vim.ui.input({
+        prompt = "Enter path to executable: ",
+        default = "",
+      }, function(path)
+        if path and path ~= "" then
+          callback({
+            name = vim.fn.fnamemodify(path, ":t"),
+            relative = path,
+            path = path,
+          })
+        end
+      end)
+    else
       callback(executables[idx])
     end
   end)

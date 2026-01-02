@@ -23,11 +23,11 @@ return {
       vim.keymap.set("n", "<leader>rb", terminal_utils.build_project, { desc = "Build project" })
       vim.keymap.set("n", "<leader>rd", function()
         if vim.bo.filetype == "go" then
-          require("utils.dap_helpers").debug_go_smart()
+          require("dap").continue() -- Opens DAP config picker
         else
           vim.notify("Smart debug only supported for Go", vim.log.levels.WARN)
         end
-      end, { desc = "Debug project (smart)" })
+      end, { desc = "Debug project (picker)" })
 
       local on_attach = function(_, bufnr)
         local opts = function(desc)
