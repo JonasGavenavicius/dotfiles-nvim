@@ -1,6 +1,32 @@
 -- Terminal utilities for running programs
 local M = {}
 
+-- Helper to load language-specific modules
+local function load_language_module(filetype)
+  local ok, module = pcall(require, "utils.languages." .. filetype)
+  if ok then
+    return module
+  end
+  return nil
+end
+
+-- Generic executable selection (works for any language)
+local function select_executable(executables, callback)
+  local items = {}
+  for _, exec in ipairs(executables) do
+    local display = string.format("%s (%s)", exec.name, exec.relative or exec.path or "")
+    table.insert(items, display)
+  end
+
+  vim.ui.select(items, {
+    prompt = "Select executable:",
+  }, function(choice, idx)
+    if choice and idx then
+      callback(executables[idx])
+    end
+  end)
+end
+
 -- Default run commands for different file types
 M.run_commands = {
   go = function(file) return "go run " .. vim.fn.shellescape(file) end,
@@ -40,7 +66,7 @@ M.run_current_file = function()
     vim.notify("No valid file to run", vim.log.levels.WARN)
     return
   end
-  
+
   local ft = vim.bo.filetype
   local command_fn = M.run_commands[ft]
   if not command_fn then
@@ -66,16 +92,16 @@ M.run_with_arguments = function()
     vim.notify("No valid file to run", vim.log.levels.WARN)
     return
   end
-  
+
   local ft = vim.bo.filetype
   local command_fn = M.run_commands[ft]
   if not command_fn then
     vim.notify("Unsupported filetype: " .. ft, vim.log.levels.WARN)
     return
   end
-  
+
   local default_cmd = command_fn(file)
-  
+
   vim.ui.input({
     prompt = "Run command: ",
     default = default_cmd .. " ",
@@ -89,6 +115,120 @@ M.run_with_arguments = function()
       end
     end
   end)
+end
+
+-- Run project (smart, language-aware)
+M.run_project = function()
+  local file = vim.fn.expand("%:p")
+  if file == "" or not vim.fn.filereadable(file) then
+    vim.notify("No valid file to run", vim.log.levels.WARN)
+    return
+  end
+
+  local ft = vim.bo.filetype
+  local lang = load_language_module(ft)
+  if not lang then
+    vim.notify("No smart project support for " .. ft, vim.log.levels.WARN)
+    return
+  end
+
+  local project_root = lang.find_project_root(file)
+  if not project_root then
+    vim.notify("No project root found", vim.log.levels.WARN)
+    return
+  end
+
+  local executables = lang.find_executables(project_root)
+
+  if #executables == 0 then
+    vim.notify("No executables found in project", vim.log.levels.WARN)
+  elseif #executables == 1 then
+    lang.run_executable(executables[1], project_root)
+  else
+    select_executable(executables, function(selected)
+      lang.run_executable(selected, project_root)
+    end)
+  end
+end
+
+-- Run project with arguments (smart, language-aware)
+M.run_project_with_arguments = function()
+  local file = vim.fn.expand("%:p")
+  if file == "" or not vim.fn.filereadable(file) then
+    vim.notify("No valid file to run", vim.log.levels.WARN)
+    return
+  end
+
+  local ft = vim.bo.filetype
+  local lang = load_language_module(ft)
+  if not lang then
+    vim.notify("No smart project support for " .. ft, vim.log.levels.WARN)
+    return
+  end
+
+  local project_root = lang.find_project_root(file)
+  if not project_root then
+    vim.notify("No project root found", vim.log.levels.WARN)
+    return
+  end
+
+  local executables = lang.find_executables(project_root)
+
+  if #executables == 0 then
+    vim.notify("No executables found in project", vim.log.levels.WARN)
+    return
+  end
+
+  local function run_with_args(selected)
+    vim.ui.input({
+      prompt = "Arguments: ",
+      default = "",
+    }, function(args)
+      if args ~= nil then
+        lang.run_executable(selected, project_root, args)
+      end
+    end)
+  end
+
+  if #executables == 1 then
+    run_with_args(executables[1])
+  else
+    select_executable(executables, run_with_args)
+  end
+end
+
+-- Build project (smart, language-aware)
+M.build_project = function()
+  local file = vim.fn.expand("%:p")
+  if file == "" or not vim.fn.filereadable(file) then
+    vim.notify("No valid file to run", vim.log.levels.WARN)
+    return
+  end
+
+  local ft = vim.bo.filetype
+  local lang = load_language_module(ft)
+  if not lang then
+    vim.notify("No smart project support for " .. ft, vim.log.levels.WARN)
+    return
+  end
+
+  local project_root = lang.find_project_root(file)
+  if not project_root then
+    vim.notify("No project root found", vim.log.levels.WARN)
+    return
+  end
+
+  local executables = lang.find_executables(project_root)
+
+  if #executables == 0 then
+    vim.notify("No executables found in project", vim.log.levels.WARN)
+  elseif #executables == 1 then
+    lang.build_executable(executables[1], project_root)
+  else
+    select_executable(executables, function(selected)
+      lang.build_executable(selected, project_root)
+    end)
+  end
 end
 
 return M

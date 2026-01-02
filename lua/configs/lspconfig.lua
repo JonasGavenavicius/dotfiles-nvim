@@ -13,8 +13,21 @@ return {
       local terminal_utils = require("utils.terminal")
       
       -- Set up keymaps
+      -- Simple run (all languages)
       vim.keymap.set("n", "<leader>rf", terminal_utils.run_current_file, { desc = "Run current file" })
-      vim.keymap.set("n", "<leader>rc", terminal_utils.run_with_arguments, { desc = "Run current file with custom arguments" })
+      vim.keymap.set("n", "<leader>rc", terminal_utils.run_with_arguments, { desc = "Run with arguments" })
+
+      -- Smart project run (language-aware)
+      vim.keymap.set("n", "<leader>rp", terminal_utils.run_project, { desc = "Run project (smart)" })
+      vim.keymap.set("n", "<leader>ra", terminal_utils.run_project_with_arguments, { desc = "Run project with arguments" })
+      vim.keymap.set("n", "<leader>rb", terminal_utils.build_project, { desc = "Build project" })
+      vim.keymap.set("n", "<leader>rd", function()
+        if vim.bo.filetype == "go" then
+          require("utils.dap_helpers").debug_go_smart()
+        else
+          vim.notify("Smart debug only supported for Go", vim.log.levels.WARN)
+        end
+      end, { desc = "Debug project (smart)" })
 
       local on_attach = function(_, bufnr)
         local opts = function(desc)

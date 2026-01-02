@@ -13,7 +13,37 @@ local M = {
     -- Setup plugins
     require("nvim-dap-virtual-text").setup({})
     dapui.setup()
-    require("dap-go").setup()
+
+    -- Find dlv in PATH, GOPATH, or common locations
+    local function find_dlv()
+      -- Try PATH first
+      if vim.fn.executable("dlv") == 1 then
+        return "dlv"
+      end
+
+      -- Try GOPATH/bin
+      local gopath = vim.fn.system("go env GOPATH 2>/dev/null"):gsub("\n", "")
+      if gopath ~= "" then
+        local dlv_path = gopath .. "/bin/dlv"
+        if vim.fn.executable(dlv_path) == 1 then
+          return dlv_path
+        end
+      end
+
+      -- Fallback to default Go location
+      local default_dlv = vim.fn.expand("$HOME/go/bin/dlv")
+      if vim.fn.executable(default_dlv) == 1 then
+        return default_dlv
+      end
+
+      return "dlv" -- Let it fail with clear error
+    end
+
+    require("dap-go").setup({
+      delve = {
+        path = find_dlv(),
+      },
+    })
     require("dap-ruby").setup()
 
     -- DAP UI auto open/close
