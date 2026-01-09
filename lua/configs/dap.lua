@@ -203,27 +203,6 @@ local M = {
       },
       {
         type = "go",
-        name = "Debug test",
-        request = "launch",
-        mode = "test",
-        program = "${file}",
-      },
-      {
-        type = "go",
-        name = "Debug current test",
-        request = "launch",
-        mode = "test",
-        program = ".",
-        args = function()
-          local test_name = vim.fn.expand("<cword>") -- Get function name under cursor
-          if test_name:match("^Test") then
-            return { "-test.run", "^" .. test_name .. "$" }
-          end
-          return {}
-        end,
-      },
-      {
-        type = "go",
         name = "Attach remote",
         mode = "remote",
         request = "attach",

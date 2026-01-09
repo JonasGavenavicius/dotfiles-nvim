@@ -9,7 +9,6 @@ local M = {
     "nvim-neotest/neotest-jest",
     "rouge8/neotest-rust",
     "nvim-neotest/neotest-vim-test",
-    "fredrikaverpil/neotest-golang",
     { "olimorris/neotest-rspec", commit = "281c0ed0e55d623e8028796e1c4dc27b7e421fd0" },
     { "olimorris/neotest-rspec" },
   },
@@ -31,19 +30,6 @@ M.config = function()
       require("neotest-rust"),
       require("neotest-vim-test")({
         ignore_file_types = { "python", "vim", "lua" },
-      }),
-      require("neotest-golang")({
-        go_test_args = {
-          "-v",
-          "-count=1",
-          "-timeout=60s",
-        },
-        dap_go_enabled = true,
-        dap_go_opts = {
-          delve = {
-            path = "dlv",
-          },
-        },
       }),
       require("neotest-rspec")({
         rspec_cmd = function()
@@ -196,94 +182,10 @@ M.config = function()
     vim.notify(string.format("Discovered tests in %d files. Open summary (<leader>tt) to view.", discovered), vim.log.levels.INFO)
   end
 
-  -- Go-specific test scanning
-  local function scan_go_tests(base_path, depth_description)
-    vim.notify("Scanning for Go tests in " .. depth_description .. "...", vim.log.levels.INFO)
-
-    local filter_dirs = { ".git", "node_modules", "vendor", ".venv", "venv", "tmp", "log" }
-    local test_files = vim.fn.globpath(base_path, "**/*_test.go", false, true)
-
-    -- Filter excluded directories
-    local filtered_files = {}
-    for _, file in ipairs(test_files) do
-      local should_include = true
-      for _, excluded in ipairs(filter_dirs) do
-        if file:match("/" .. excluded .. "/") then
-          should_include = false
-          break
-        end
-      end
-      if should_include then
-        table.insert(filtered_files, file)
-      end
-    end
-
-    if #filtered_files == 0 then
-      vim.notify("No Go test files found in " .. depth_description, vim.log.levels.WARN)
-      return
-    end
-
-    vim.notify(string.format("Found %d Go test files, discovering tests...", #filtered_files), vim.log.levels.INFO)
-
-    local original_buf = vim.api.nvim_get_current_buf()
-    local discovered = 0
-    local batch_size = 50
-
-    for i, file in ipairs(filtered_files) do
-      vim.cmd("badd " .. vim.fn.fnameescape(file))
-      local buf = vim.fn.bufnr(file)
-      if buf ~= -1 then
-        vim.api.nvim_buf_call(buf, function()
-          vim.cmd("doautocmd BufEnter")
-        end)
-        discovered = discovered + 1
-      end
-
-      if i % batch_size == 0 then
-        local progress = math.floor((i / #filtered_files) * 100)
-        vim.notify(string.format("Progress: %d%% (%d/%d files)", progress, i, #filtered_files), vim.log.levels.INFO)
-        vim.cmd("redraw")
-      end
-    end
-
-    vim.api.nvim_set_current_buf(original_buf)
-    vim.notify(
-      string.format("Discovered Go tests in %d files. Open summary (<leader>tt) to view.", discovered),
-      vim.log.levels.INFO
-    )
-  end
-
   map("n", "<leader>tsp", function()
     local filetype = vim.bo.filetype
 
-    if filetype == "go" then
-      -- For Go, scan from module root (where go.mod is)
-      local current_dir = vim.fn.expand("%:p:h")
-      local project_root = vim.fn.getcwd()
-
-      -- Walk up looking for go.mod
-      local path = current_dir
-      local module_root = nil
-
-      while path:len() >= project_root:len() do
-        if vim.fn.filereadable(path .. "/go.mod") == 1 then
-          module_root = path
-          break
-        end
-        local parent = vim.fn.fnamemodify(path, ":h")
-        if path == parent then
-          break
-        end
-        path = parent
-      end
-
-      if module_root then
-        scan_go_tests(module_root, "Go module")
-      else
-        vim.notify("No go.mod found in current path", vim.log.levels.WARN)
-      end
-
-    elseif filetype == "ruby" then
+    if filetype == "ruby" then
       -- Existing Ruby logic
       local current_file = vim.fn.expand("%:p")
       local current_dir = vim.fn.expand("%:p:h")
@@ -327,22 +229,20 @@ M.config = function()
         end
       end
     else
-      vim.notify("Test scanning only supported for Go and Ruby", vim.log.levels.WARN)
+      vim.notify("Test scanning only supported for Ruby", vim.log.levels.WARN)
     end
-  end, { desc = "Scan current package tests" })
+  end, { desc = "Scan Ruby package tests" })
 
   map("n", "<leader>tsd", function()
     local filetype = vim.bo.filetype
     local current_dir = vim.fn.expand("%:p:h")
 
-    if filetype == "go" then
-      scan_go_tests(current_dir, "current directory")
-    elseif filetype == "ruby" then
+    if filetype == "ruby" then
       scan_for_tests(current_dir, "current directory")
     else
-      vim.notify("Test scanning only supported for Go and Ruby", vim.log.levels.WARN)
+      vim.notify("Test scanning only supported for Ruby", vim.log.levels.WARN)
     end
-  end, { desc = "Scan directory for tests" })
+  end, { desc = "Scan directory for Ruby tests" })
 end
 
 M.keys = function()
