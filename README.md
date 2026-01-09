@@ -74,7 +74,7 @@ nvim
 
 | Language | LSP | Debug | Format | Lint | Test |
 |----------|-----|-------|--------|------|------|
-| **Go** | ✅ gopls | ✅ DAP | ✅ gofumpt | ✅ golangci_lint | ✅ Neotest |
+| **Go** | ✅ gopls | ✅ DAP | ✅ gofumpt | ✅ golangci_lint | ❌ |
 | **Rust** | ✅ rust-analyzer | ✅ codelldb | ✅ rustfmt | ✅ | ✅ Neotest |
 | **Ruby** | ✅ ruby-lsp | ✅ readapt | ✅ rubocop | ✅ rubocop | ✅ RSpec |
 | **JavaScript/TS** | ✅ | ❌ | ✅ prettier | ✅ eslint_d | ✅ Jest |
