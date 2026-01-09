@@ -37,6 +37,11 @@ return {
     })
 
     require("scrollbar.handlers.search").setup()
-    require("scrollbar.handlers.gitsigns").setup()
+
+    -- Setup gitsigns handler with error handling
+    local ok, gitsigns_handler = pcall(require, "scrollbar.handlers.gitsigns")
+    if ok then
+      gitsigns_handler.setup()
+    end
   end,
 }

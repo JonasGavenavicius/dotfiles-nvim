@@ -1,7 +1,6 @@
 local M = {
   "nvim-neotest/neotest",
   lazy = true,
-  commit = "747775fc22dfeb6102bdde6559ccb5126dac0ff8",
   dependencies = {
     "nvim-neotest/nvim-nio",
     "nvim-lua/plenary.nvim",
@@ -21,7 +20,8 @@ M.config = function()
   neotest.setup({
     log_level = vim.log.levels.DEBUG,
     discovery = {
-      enabled = false,
+      enabled = true,
+      concurrent = 8,
     },
     status = {
       enabled = true,
@@ -32,7 +32,19 @@ M.config = function()
       require("neotest-vim-test")({
         ignore_file_types = { "python", "vim", "lua" },
       }),
-      require("neotest-golang"),
+      require("neotest-golang")({
+        go_test_args = {
+          "-v",
+          "-count=1",
+          "-timeout=60s",
+        },
+        dap_go_enabled = true,
+        dap_go_opts = {
+          delve = {
+            path = "dlv",
+          },
+        },
+      }),
       require("neotest-rspec")({
         rspec_cmd = function()
           return vim.tbl_flatten({ "bundle", "exec", "rspec" })
@@ -184,52 +196,152 @@ M.config = function()
     vim.notify(string.format("Discovered tests in %d files. Open summary (<leader>tt) to view.", discovered), vim.log.levels.INFO)
   end
 
-  map("n", "<leader>tsp", function()
-    -- Find current package by walking up directory tree
-    local current_file = vim.fn.expand("%:p")
-    local current_dir = vim.fn.expand("%:p:h")
-    local project_root = vim.fn.getcwd()
+  -- Go-specific test scanning
+  local function scan_go_tests(base_path, depth_description)
+    vim.notify("Scanning for Go tests in " .. depth_description .. "...", vim.log.levels.INFO)
 
-    -- Walk up looking for packages/[package_name] structure
-    local path = current_dir
-    local package_spec_dir = nil
+    local filter_dirs = { ".git", "node_modules", "vendor", ".venv", "venv", "tmp", "log" }
+    local test_files = vim.fn.globpath(base_path, "**/*_test.go", false, true)
 
-    while path:len() >= project_root:len() do
-      -- Check if we're inside a packages directory
-      local parent = vim.fn.fnamemodify(path, ":h")
-      local dirname = vim.fn.fnamemodify(path, ":t")
-
-      if vim.fn.fnamemodify(parent, ":t") == "packages" then
-        -- Found a package directory
-        local spec_path = path .. "/spec"
-        if vim.fn.isdirectory(spec_path) == 1 then
-          package_spec_dir = spec_path
+    -- Filter excluded directories
+    local filtered_files = {}
+    for _, file in ipairs(test_files) do
+      local should_include = true
+      for _, excluded in ipairs(filter_dirs) do
+        if file:match("/" .. excluded .. "/") then
+          should_include = false
           break
         end
       end
-
-      -- Move up one directory
-      if path == parent then break end
-      path = parent
+      if should_include then
+        table.insert(filtered_files, file)
+      end
     end
 
-    -- Use found package spec dir, or fallback to root spec
-    if package_spec_dir then
-      local package_name = vim.fn.fnamemodify(package_spec_dir:gsub("/spec$", ""), ":t")
-      scan_for_tests(package_spec_dir, "package '" .. package_name .. "' specs")
-    else
-      local root_spec = project_root .. "/spec"
-      if vim.fn.isdirectory(root_spec) == 1 then
-        scan_for_tests(root_spec, "root spec directory")
-      else
-        vim.notify("Not in a package and no root spec directory found", vim.log.levels.WARN)
+    if #filtered_files == 0 then
+      vim.notify("No Go test files found in " .. depth_description, vim.log.levels.WARN)
+      return
+    end
+
+    vim.notify(string.format("Found %d Go test files, discovering tests...", #filtered_files), vim.log.levels.INFO)
+
+    local original_buf = vim.api.nvim_get_current_buf()
+    local discovered = 0
+    local batch_size = 50
+
+    for i, file in ipairs(filtered_files) do
+      vim.cmd("badd " .. vim.fn.fnameescape(file))
+      local buf = vim.fn.bufnr(file)
+      if buf ~= -1 then
+        vim.api.nvim_buf_call(buf, function()
+          vim.cmd("doautocmd BufEnter")
+        end)
+        discovered = discovered + 1
       end
+
+      if i % batch_size == 0 then
+        local progress = math.floor((i / #filtered_files) * 100)
+        vim.notify(string.format("Progress: %d%% (%d/%d files)", progress, i, #filtered_files), vim.log.levels.INFO)
+        vim.cmd("redraw")
+      end
+    end
+
+    vim.api.nvim_set_current_buf(original_buf)
+    vim.notify(
+      string.format("Discovered Go tests in %d files. Open summary (<leader>tt) to view.", discovered),
+      vim.log.levels.INFO
+    )
+  end
+
+  map("n", "<leader>tsp", function()
+    local filetype = vim.bo.filetype
+
+    if filetype == "go" then
+      -- For Go, scan from module root (where go.mod is)
+      local current_dir = vim.fn.expand("%:p:h")
+      local project_root = vim.fn.getcwd()
+
+      -- Walk up looking for go.mod
+      local path = current_dir
+      local module_root = nil
+
+      while path:len() >= project_root:len() do
+        if vim.fn.filereadable(path .. "/go.mod") == 1 then
+          module_root = path
+          break
+        end
+        local parent = vim.fn.fnamemodify(path, ":h")
+        if path == parent then
+          break
+        end
+        path = parent
+      end
+
+      if module_root then
+        scan_go_tests(module_root, "Go module")
+      else
+        vim.notify("No go.mod found in current path", vim.log.levels.WARN)
+      end
+
+    elseif filetype == "ruby" then
+      -- Existing Ruby logic
+      local current_file = vim.fn.expand("%:p")
+      local current_dir = vim.fn.expand("%:p:h")
+      local project_root = vim.fn.getcwd()
+
+      -- Walk up looking for packages/[package_name] structure
+      local path = current_dir
+      local package_spec_dir = nil
+
+      while path:len() >= project_root:len() do
+        -- Check if we're inside a packages directory
+        local parent = vim.fn.fnamemodify(path, ":h")
+        local dirname = vim.fn.fnamemodify(path, ":t")
+
+        if vim.fn.fnamemodify(parent, ":t") == "packages" then
+          -- Found a package directory
+          local spec_path = path .. "/spec"
+          if vim.fn.isdirectory(spec_path) == 1 then
+            package_spec_dir = spec_path
+            break
+          end
+        end
+
+        -- Move up one directory
+        if path == parent then
+          break
+        end
+        path = parent
+      end
+
+      -- Use found package spec dir, or fallback to root spec
+      if package_spec_dir then
+        local package_name = vim.fn.fnamemodify(package_spec_dir:gsub("/spec$", ""), ":t")
+        scan_for_tests(package_spec_dir, "package '" .. package_name .. "' specs")
+      else
+        local root_spec = project_root .. "/spec"
+        if vim.fn.isdirectory(root_spec) == 1 then
+          scan_for_tests(root_spec, "root spec directory")
+        else
+          vim.notify("Not in a package and no root spec directory found", vim.log.levels.WARN)
+        end
+      end
+    else
+      vim.notify("Test scanning only supported for Go and Ruby", vim.log.levels.WARN)
     end
   end, { desc = "Scan current package tests" })
 
   map("n", "<leader>tsd", function()
+    local filetype = vim.bo.filetype
     local current_dir = vim.fn.expand("%:p:h")
-    scan_for_tests(current_dir, "current directory")
+
+    if filetype == "go" then
+      scan_go_tests(current_dir, "current directory")
+    elseif filetype == "ruby" then
+      scan_for_tests(current_dir, "current directory")
+    else
+      vim.notify("Test scanning only supported for Go and Ruby", vim.log.levels.WARN)
+    end
   end, { desc = "Scan directory for tests" })
 end
 

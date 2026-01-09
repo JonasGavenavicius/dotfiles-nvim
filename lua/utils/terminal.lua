@@ -62,6 +62,9 @@ M.run_commands = {
 -- Terminal instance for running programs
 local run_terminal = nil
 
+-- Named terminal instances for multi-service support
+local named_terminals = {}
+
 -- Create or reuse terminal for running programs
 M.get_run_terminal = function()
   if run_terminal == nil then
@@ -70,7 +73,7 @@ M.get_run_terminal = function()
       vim.notify("Failed to load toggleterm", vim.log.levels.ERROR)
       return nil
     end
-    
+
     run_terminal = Terminal.Terminal:new({
       direction = "float",
       close_on_exit = false,
@@ -78,6 +81,35 @@ M.get_run_terminal = function()
     })
   end
   return run_terminal
+end
+
+-- Create or reuse a named terminal (for multi-service support)
+M.get_named_terminal = function(name, opts)
+  opts = opts or {}
+
+  if named_terminals[name] then
+    return named_terminals[name]
+  end
+
+  local ok, Terminal = pcall(require, "toggleterm.terminal")
+  if not ok then
+    vim.notify("Failed to load toggleterm", vim.log.levels.ERROR)
+    return nil
+  end
+
+  local term = Terminal.Terminal:new(vim.tbl_extend("force", {
+    direction = "float",
+    close_on_exit = false,
+    on_exit = function()
+      named_terminals[name] = nil
+      if opts.on_exit then
+        opts.on_exit()
+      end
+    end,
+  }, opts))
+
+  named_terminals[name] = term
+  return term
 end
 
 -- Run current file with default command

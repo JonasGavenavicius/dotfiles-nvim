@@ -11,7 +11,9 @@ return {
       
       -- Use terminal utilities module
       local terminal_utils = require("utils.terminal")
-      
+      local multi_service = require("utils.multi_service_launcher")
+      local process_manager = require("utils.process_manager")
+
       -- Set up keymaps
       -- Simple run (all languages)
       vim.keymap.set("n", "<leader>rf", terminal_utils.run_current_file, { desc = "Run current file" })
@@ -28,6 +30,28 @@ return {
           vim.notify("Smart debug only supported for Go", vim.log.levels.WARN)
         end
       end, { desc = "Debug project (picker)" })
+
+      -- Multi-service management (Go only for now)
+      vim.keymap.set("n", "<leader>rm", function()
+        if vim.bo.filetype == "go" then
+          multi_service.launch_services()
+        else
+          vim.notify("Multi-service launcher only supported for Go", vim.log.levels.WARN)
+        end
+      end, { desc = "Launch multiple services" })
+
+      vim.keymap.set("n", "<leader>rs", function()
+        if vim.bo.filetype == "go" then
+          multi_service.start_service()
+        else
+          vim.notify("Service management only supported for Go", vim.log.levels.WARN)
+        end
+      end, { desc = "Start service" })
+
+      vim.keymap.set("n", "<leader>rk", multi_service.stop_service, { desc = "Stop service" })
+      vim.keymap.set("n", "<leader>rr", multi_service.restart_service, { desc = "Restart service" })
+      vim.keymap.set("n", "<leader>rK", process_manager.stop_all, { desc = "Stop all services" })
+      vim.keymap.set("n", "<leader>rl", process_manager.show_status_ui, { desc = "List services" })
 
       local on_attach = function(_, bufnr)
         local opts = function(desc)
