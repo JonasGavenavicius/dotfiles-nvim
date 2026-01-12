@@ -4,7 +4,7 @@ local M = {}
 -- Smart Go debugging with executable selection
 function M.debug_go_smart()
   local dap = require("dap")
-  local go_utils = require("utils.languages.go")
+  local go_utils = require("configs.languages.go.run")
 
   local file = vim.fn.expand("%:p")
   if file == "" or not vim.fn.filereadable(file) then

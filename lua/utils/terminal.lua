@@ -3,7 +3,9 @@ local M = {}
 
 -- Helper to load language-specific modules
 local function load_language_module(filetype)
-  local ok, module = pcall(require, "utils.languages." .. filetype)
+  -- Try to load language-specific run module
+  local module_path = "configs.languages." .. filetype .. ".run"
+  local ok, module = pcall(require, module_path)
   if ok then
     return module
   end

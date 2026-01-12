@@ -3,7 +3,7 @@ local M = {}
 
 -- Helper to load Go language module
 local function load_go_module()
-  local ok, go_module = pcall(require, "utils.languages.go")
+  local ok, go_module = pcall(require, "configs.languages.go.run")
   if not ok then
     vim.notify("Failed to load Go utilities", vim.log.levels.ERROR)
     return nil

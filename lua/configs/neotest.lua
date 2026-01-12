@@ -15,7 +15,6 @@ local M = {
 
 M.config = function()
   local neotest = require("neotest")
-  local ruby = require("utils.languages.ruby")
   neotest.setup({
     log_level = vim.log.levels.DEBUG,
     discovery = {
@@ -65,35 +64,8 @@ M.config = function()
     },
   })
 
-  -- Ruby-specific keybindings
-  local map = vim.keymap.set
-  map("n", "<leader>trn", function()
-    if vim.bo.filetype == "ruby" then
-      ruby.run_nearest_test_in_terminal()
-    else
-      vim.notify("Terminal runner only supported for Ruby", vim.log.levels.WARN)
-    end
-  end, { desc = "Run nearest ruby test in terminal" })
-
-  map("n", "<leader>trk", function()
-    ruby.kill_rspec_processes()
-  end, { desc = "Kill all running RSpec tests" })
-
-  map("n", "<leader>tsp", function()
-    if vim.bo.filetype == "ruby" then
-      ruby.scan_package_tests()
-    else
-      vim.notify("Test scanning only supported for Ruby", vim.log.levels.WARN)
-    end
-  end, { desc = "Scan Ruby package tests" })
-
-  map("n", "<leader>tsd", function()
-    if vim.bo.filetype == "ruby" then
-      ruby.scan_current_directory()
-    else
-      vim.notify("Test scanning only supported for Ruby", vim.log.levels.WARN)
-    end
-  end, { desc = "Scan directory for Ruby tests" })
+  -- Language-specific test keymaps (in configs/languages/{lang}/test.lua)
+  require("configs.languages.ruby.test").setup_keymaps()
 end
 
 M.keys = function()

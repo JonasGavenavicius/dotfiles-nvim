@@ -1,4 +1,4 @@
--- Ruby language support for test management and execution
+-- Ruby testing configuration and utilities
 local M = {}
 
 -- ============================================================================
@@ -175,6 +175,29 @@ function M.kill_rspec_processes()
   vim.fn.jobstart({ "pkill", "-f", "rspec" }, {
     on_exit = function()
       print("Killed all rspec processes.")
+    end,
+  })
+end
+
+-- Setup Ruby test keybindings (buffer-local for Ruby files)
+function M.setup_keymaps()
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "ruby",
+    callback = function(args)
+      local bufnr = args.buf
+      local map = vim.keymap.set
+
+      map("n", "<leader>trn", M.run_nearest_test_in_terminal,
+          { buffer = bufnr, desc = "Run nearest ruby test in terminal" })
+
+      map("n", "<leader>trk", M.kill_rspec_processes,
+          { buffer = bufnr, desc = "Kill all running RSpec tests" })
+
+      map("n", "<leader>tsp", M.scan_package_tests,
+          { buffer = bufnr, desc = "Scan Ruby package tests" })
+
+      map("n", "<leader>tsd", M.scan_current_directory,
+          { buffer = bufnr, desc = "Scan directory for Ruby tests" })
     end,
   })
 end
