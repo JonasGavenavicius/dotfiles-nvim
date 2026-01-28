@@ -18,7 +18,7 @@ M.config = function()
   neotest.setup({
     log_level = vim.log.levels.DEBUG,
     discovery = {
-      enabled = true,
+      enabled = false,  -- Disable global auto-discovery (Ruby files handle it manually)
       concurrent = 8,
     },
     status = {
@@ -66,6 +66,9 @@ M.config = function()
 
   -- Language-specific test keymaps (in configs/languages/{lang}/test.lua)
   require("configs.languages.ruby.test").setup_keymaps()
+
+  -- Initialize Ruby auto-discovery for current file
+  require("configs.languages.ruby.test").setup_auto_discovery()
 end
 
 M.keys = function()

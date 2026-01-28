@@ -150,6 +150,88 @@ function M.scan_current_directory()
   M.scan_for_tests(current_dir, "current directory")
 end
 
+-- Scan for tests in the current file only
+function M.scan_current_file()
+  local current_file = vim.fn.expand("%:p")
+
+  if not current_file:match("_spec%.rb$") then
+    vim.notify("Current file is not a spec file", vim.log.levels.WARN)
+    return
+  end
+
+  -- Silently load current buffer and trigger discovery
+  local buf = vim.fn.bufnr(current_file)
+  if buf == -1 then
+    vim.cmd("badd " .. vim.fn.fnameescape(current_file))
+    buf = vim.fn.bufnr(current_file)
+  end
+
+  if buf ~= -1 then
+    vim.api.nvim_buf_call(buf, function()
+      vim.cmd("doautocmd BufEnter")
+    end)
+  end
+end
+
+-- Scan for tests in the entire project
+function M.scan_all_tests()
+  local project_root = vim.fn.getcwd()
+  M.scan_for_tests(project_root, "entire project")
+end
+
+-- Interactive menu to choose discovery scope
+function M.choose_discovery_scope()
+  if vim.bo.filetype ~= "ruby" then
+    vim.notify("Discovery menu only available in Ruby files", vim.log.levels.WARN)
+    return
+  end
+
+  local options = {
+    "Current file only",
+    "Current directory",
+    "Current package/root",
+    "Entire project"
+  }
+
+  vim.ui.select(options, {
+    prompt = "Select test discovery scope:",
+    format_item = function(item)
+      return "  " .. item
+    end,
+  }, function(choice, idx)
+    if not choice or not idx then
+      return
+    end
+
+    if idx == 1 then
+      M.scan_current_file()
+      vim.notify("Discovered tests in current file. Open summary (<leader>tt) to view.", vim.log.levels.INFO)
+    elseif idx == 2 then
+      M.scan_current_directory()
+    elseif idx == 3 then
+      M.scan_package_tests()
+    elseif idx == 4 then
+      M.scan_all_tests()
+    end
+  end)
+end
+
+-- Auto-discover current file when opening Ruby spec files
+function M.setup_auto_discovery()
+  vim.api.nvim_create_autocmd("BufEnter", {
+    pattern = "*_spec.rb",
+    callback = function()
+      -- Only auto-discover if filetype is ruby
+      if vim.bo.filetype == "ruby" then
+        -- Use vim.schedule to avoid blocking on file open
+        vim.schedule(function()
+          M.scan_current_file()
+        end)
+      end
+    end,
+  })
+end
+
 -- Run nearest test in terminal using toggleterm
 function M.run_nearest_test_in_terminal()
   local file = vim.fn.expand("%")
@@ -187,17 +269,29 @@ function M.setup_keymaps()
       local bufnr = args.buf
       local map = vim.keymap.set
 
+      -- Test running
       map("n", "<leader>trn", M.run_nearest_test_in_terminal,
           { buffer = bufnr, desc = "Run nearest ruby test in terminal" })
 
       map("n", "<leader>trk", M.kill_rspec_processes,
           { buffer = bufnr, desc = "Kill all running RSpec tests" })
 
-      map("n", "<leader>tsp", M.scan_package_tests,
-          { buffer = bufnr, desc = "Scan Ruby package tests" })
+      -- Test discovery (manual triggers)
+      map("n", "<leader>tsf", M.scan_current_file,
+          { buffer = bufnr, desc = "Rediscover current file tests" })
 
       map("n", "<leader>tsd", M.scan_current_directory,
           { buffer = bufnr, desc = "Scan directory for Ruby tests" })
+
+      map("n", "<leader>tsp", M.scan_package_tests,
+          { buffer = bufnr, desc = "Scan Ruby package tests" })
+
+      map("n", "<leader>tsa", M.scan_all_tests,
+          { buffer = bufnr, desc = "Scan all Ruby tests in project" })
+
+      -- Discovery menu
+      map("n", "<leader>ts", M.choose_discovery_scope,
+          { buffer = bufnr, desc = "Choose Ruby test discovery scope" })
     end,
   })
 end
