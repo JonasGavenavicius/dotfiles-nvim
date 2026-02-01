@@ -8,7 +8,13 @@ local M = {
     "nvim-treesitter/nvim-treesitter",
     "nvim-neotest/neotest-jest",
     "rouge8/neotest-rust",
-    "nvim-neotest/neotest-vim-test",
+    {
+      "fredrikaverpil/neotest-golang",
+      version = "*",                                                            -- Optional, but recommended; track releases
+      build = function()
+        vim.system({ "go", "install", "gotest.tools/gotestsum@latest" }):wait() -- Optional, but recommended
+      end,
+    },
     "olimorris/neotest-rspec",
   },
 }
@@ -18,7 +24,7 @@ M.config = function()
   neotest.setup({
     log_level = vim.log.levels.DEBUG,
     discovery = {
-      enabled = false,  -- Disable global auto-discovery (Ruby files handle it manually)
+      enabled = true, -- Auto-discover tests in all supported languages
       concurrent = 8,
     },
     status = {
@@ -27,8 +33,14 @@ M.config = function()
     adapters = {
       require("neotest-jest"),
       require("neotest-rust"),
-      require("neotest-vim-test")({
-        ignore_file_types = { "python", "vim", "lua" },
+      require("neotest-golang")({
+        -- runner = "gotestsum",
+        dap_go_enabled = true,
+        go_test_args = {
+          "-v",
+          "-race",
+          "-count=1",
+        }
       }),
       require("neotest-rspec")({
         rspec_cmd = function()
@@ -64,25 +76,24 @@ M.config = function()
     },
   })
 
-  -- Language-specific test keymaps (in configs/languages/{lang}/test.lua)
+  -- Language-specific test keymaps
+  -- (in configs/languages/{lang}/test.lua)
   require("configs.languages.ruby.test").setup_keymaps()
 
-  -- Initialize Ruby auto-discovery for current file
-  require("configs.languages.ruby.test").setup_auto_discovery()
+  -- Note: Neotest auto-discovers tests when opening test files
+  -- Manual discovery keymaps still available via <leader>ts in language configs
 end
 
-M.keys = function()
-  local neotest = require("neotest")
-  return {
-    { "<leader>tn", function() neotest.run.run() end,                     desc = "Run nearest test" },
-    { "<leader>td", function() neotest.run.run({ strategy = "dap" }) end, desc = "Run nearest test debug" },
-    { "<leader>tf", function() neotest.run.run(vim.fn.expand("%")) end,   desc = "Run file tests" },
-    { "<leader>ta", function() neotest.run.run({ suite = true }) end,     desc = "Run test suite" },
-    { "<leader>tl", function() neotest.run.run_last() end,                desc = "Run last test" },
-    { "<leader>tk", function() neotest.run.stop() end,                    desc = "Stop test" },
-    { "<leader>to", function() neotest.output.open({ enter = true }) end, desc = "Show test output" },
-    { "<leader>tt", function() neotest.summary.toggle() end,              desc = "Toggle test summary" },
-  }
-end
+
+M.keys = {
+  { "<leader>tn", function() require("neotest").run.run() end,                     desc = "Run nearest test" },
+  { "<leader>td", function() require("neotest").run.run({ strategy = "dap" }) end, desc = "Run nearest test debug" },
+  { "<leader>tf", function() require("neotest").run.run(vim.fn.expand("%")) end,   desc = "Run file tests" },
+  { "<leader>ta", function() require("neotest").run.run({ suite = true }) end,     desc = "Run test suite" },
+  { "<leader>tl", function() require("neotest").run.run_last() end,                desc = "Run last test" },
+  { "<leader>tk", function() require("neotest").run.stop() end,                    desc = "Stop test" },
+  { "<leader>to", function() require("neotest").output.open({ enter = true }) end, desc = "Show test output" },
+  { "<leader>tt", function() require("neotest").summary.toggle() end,              desc = "Toggle test summary" },
+}
 
 return M
