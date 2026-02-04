@@ -16,6 +16,7 @@ require("lazy").setup({
     { require "configs.themes.catppuccin" },
     { require "configs.themes.gruvbox" },
     { require "configs.themes.rose-pine" },
+    { require "configs.themes.cyberdream" },
 
     -- Plugins
     { "nvim-lua/plenary.nvim" }, -- Utility library (dependency for many plugins)

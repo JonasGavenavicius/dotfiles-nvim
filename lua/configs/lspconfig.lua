@@ -65,12 +65,53 @@ return {
       })
 
       -- gopls (Go Language Server)
+      -- Enhance capabilities with semantic tokens for rich Go highlighting
+      local gopls_capabilities = vim.tbl_deep_extend(
+        'force',
+        capabilities,
+        {
+          textDocument = {
+            semanticTokens = {
+              dynamicRegistration = false,
+              tokenTypes = {
+                "namespace", "type", "class", "enum", "interface",
+                "struct", "typeParameter", "parameter", "variable",
+                "property", "enumMember", "event", "function", "method",
+                "macro", "keyword", "modifier", "comment", "string",
+                "number", "regexp", "operator"
+              },
+              tokenModifiers = {
+                "declaration", "definition", "readonly", "static",
+                "deprecated", "abstract", "async", "modification",
+                "documentation", "defaultLibrary"
+              },
+              formats = { "relative" },
+              requests = {
+                range = true,
+                full = { delta = true },
+              },
+            },
+          },
+        }
+      )
+
       vim.lsp.config('gopls', {
         cmd = { 'gopls' },
         filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
         root_markers = { 'go.work', 'go.mod', '.git' },
-        capabilities = capabilities,
+        capabilities = gopls_capabilities,
         on_attach = on_attach,
+        settings = {
+          gopls = {
+            semanticTokens = true,
+            analyses = {
+              unusedparams = true,
+              shadow = true,
+            },
+            staticcheck = true,
+            gofumpt = true,
+          },
+        },
       })
 
       -- rust_analyzer (Rust Language Server)

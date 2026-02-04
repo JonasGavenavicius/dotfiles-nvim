@@ -27,6 +27,20 @@ local function configure_theme_transparency(theme_cmd, transparent)
                 },
             })
         end
+    elseif theme_cmd:match("cyberdream") then
+        local ok, cyberdream = pcall(require, "cyberdream")
+        if ok then
+            cyberdream.setup({
+                transparent = transparent,
+                italic_comments = true,
+                borderless_telescope = true,
+                terminal_colors = true,
+                cache = true,
+                theme = {
+                    variant = "default",
+                },
+            })
+        end
     end
 end
 
@@ -56,6 +70,13 @@ local themes = {
             { name = "Rose Pine Main", cmd = "rose-pine" },
             { name = "Rose Pine Moon", cmd = "rose-pine-moon" },
             { name = "Rose Pine Dawn", cmd = "rose-pine-dawn" },
+        }
+    },
+    {
+        name = "Cyberdream",
+        colorscheme = "cyberdream",
+        variants = {
+            { name = "Cyberdream", cmd = "cyberdream" },
         }
     },
 }
