@@ -23,7 +23,7 @@ return {
                         local file = diffview_lib.get_current_view():get_file()
                         if file then
                             vim.cmd('DiffviewClose')
-                            vim.cmd('edit ' .. file.path)
+                            vim.cmd('edit ' .. vim.fn.fnameescape(file.path))
                         end
                     end,
                 },

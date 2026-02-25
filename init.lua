@@ -46,6 +46,8 @@ require("lazy").setup({
     { require "configs.toggleterm" },
     { require "configs.gitsigns" },
     { require "configs.nvim-scrollbar" },
+    { require "configs.mini-map" },
+    { require "configs.trouble" },
     { require "configs.gitlinker" },
     { require "configs.codeowners" },
     { require "configs.snacks" },

@@ -7,6 +7,7 @@ local M = {
     "antoinemadec/FixCursorHold.nvim",
     "nvim-treesitter/nvim-treesitter",
     "nvim-neotest/neotest-jest",
+    "nvim-neotest/neotest-go",
     "rouge8/neotest-rust",
     {
       "fredrikaverpil/neotest-golang",
@@ -33,14 +34,20 @@ M.config = function()
     adapters = {
       require("neotest-jest"),
       require("neotest-rust"),
-      require("neotest-golang")({
-        -- runner = "gotestsum",
-        dap_go_enabled = true,
-        go_test_args = {
-          "-v",
-          "-race",
-          "-count=1",
-        }
+      -- require("neotest-golang")({
+      --   -- runner = "gotestsum",
+      --   dap_go_enabled = true,
+      --   go_test_args = {
+      --     "-v",
+      --     "-race",
+      --     "-count=1",
+      --   }
+      -- }),
+      require("neotest-go")({
+        experimental = {
+          test_table = true,
+        },
+        args = { "-count=1", "-timeout=60s" }
       }),
       require("neotest-rspec")({
         rspec_cmd = function()

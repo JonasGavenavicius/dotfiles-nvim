@@ -14,11 +14,22 @@ return {
       require("configs.keymaps.services").setup()
 
       local on_attach = function(_, bufnr)
+        -- Don't attach LSP keymaps/handlers to special URI scheme buffers
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        if bufname:match("^%w+://") and not bufname:match("^file://") then
+          return
+        end
+
         local opts = function(desc)
           return { buffer = bufnr, desc = "LSP: " .. desc }
         end
         vim.keymap.set({ "n", "v" }, "ga", vim.lsp.buf.code_action, opts("Code Action"))
         vim.keymap.set("n", "grl", function()
+          local current_bufname = vim.api.nvim_buf_get_name(0)
+          if current_bufname:match("^%w+://") and not current_bufname:match("^file://") then
+            vim.notify("Cannot open diagnostics for non-file buffer: " .. current_bufname, vim.log.levels.WARN)
+            return
+          end
           vim.diagnostic.setloclist()
           vim.cmd("lopen")
         end, { desc = "Open File Diagnostics (Loclist)" })
