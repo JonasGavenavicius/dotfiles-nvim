@@ -1,5 +1,6 @@
 -- Multi-service launcher for starting multiple Go binaries
 local M = {}
+local terminal_utils = require("utils.terminal")
 
 -- Helper to load Go language module
 local function load_go_module()
@@ -85,6 +86,10 @@ local function show_multi_select_picker(executables, callback)
   show_picker()
 end
 
+local function current_file()
+  return vim.fn.expand("%:p")
+end
+
 -- Launch multiple services
 function M.launch_services()
   local go = load_go_module()
@@ -93,8 +98,8 @@ function M.launch_services()
   end
 
   -- Get current file and find project root
-  local file = vim.fn.expand("%:p")
-  if file == "" or not vim.fn.filereadable(file) == 1 then
+  local file = current_file()
+  if not terminal_utils.is_readable_file(file) then
     vim.notify("No valid file open", vim.log.levels.WARN)
     return
   end
@@ -115,9 +120,7 @@ function M.launch_services()
     local process_manager = require("utils.process_manager")
 
     for _, exec in ipairs(selected_execs) do
-      local cmd = string.format("cd %s && go run %s", vim.fn.shellescape(project_root),
-        vim.fn.shellescape(exec.relative or exec.path))
-
+      local cmd = go.build_run_command(exec, project_root)
       process_manager.start_service(exec.name, cmd, exec.relative or exec.path)
     end
 
@@ -132,8 +135,8 @@ function M.start_service()
     return
   end
 
-  local file = vim.fn.expand("%:p")
-  if file == "" or not vim.fn.filereadable(file) == 1 then
+  local file = current_file()
+  if not terminal_utils.is_readable_file(file) then
     vim.notify("No valid file open", vim.log.levels.WARN)
     return
   end
@@ -171,9 +174,7 @@ function M.start_service()
 
     local process_manager = require("utils.process_manager")
     local exec = choice.executable
-    local cmd = string.format("cd %s && go run %s", vim.fn.shellescape(project_root),
-      vim.fn.shellescape(exec.relative or exec.path))
-
+    local cmd = go.build_run_command(exec, project_root)
     process_manager.start_service(exec.name, cmd, exec.relative or exec.path)
   end)
 end

@@ -22,7 +22,6 @@ M.config = function(_, opts)
 
   local map = vim.keymap.set
   local picker = require("snacks").picker
-  local todo = require("todo-comments")
 
   map("n", "<leader>ff", picker.files, { desc = "Find Files" })
   map("n", "<leader>fg", function() picker.grep({ regex = false }) end, { desc = "Grep (Literal)" })

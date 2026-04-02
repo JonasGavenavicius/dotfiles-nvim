@@ -164,13 +164,14 @@ Signature help also appears automatically while typing function or method argume
 | `<leader>trn` | Run nearest ruby test in terminal | Run RSpec test in terminal |
 | `<leader>trk` | Kill all running RSpec tests      | Kill all RSpec processes   |
 
-### Test Discovery (`<leader>ts`)
+### Go Testing (`<leader>tg`)
 
-| Key           | Action                              | Description                         |
-| ------------- | ----------------------------------- | ----------------------------------- |
-| `<leader>tsf` | Discover tests in current file      | Scan only current file for tests    |
-| `<leader>tsd` | Discover tests in current directory | Scan current directory for tests    |
-| `<leader>tsp` | Discover all tests in project       | Scan entire project (may take time) |
+| Key           | Action                          | Description                    |
+| ------------- | ------------------------------- | ------------------------------ |
+| `<leader>tgn` | Run nearest Go test in terminal | Run nearest Go test            |
+| `<leader>tgp` | Run Go package tests            | Run package tests in terminal  |
+| `<leader>tgc` | Run Go tests with coverage      | Run coverage workflow          |
+| `<leader>tgk` | Kill all running Go tests       | Kill all `go test` processes   |
 
 ---
 
@@ -221,6 +222,7 @@ Signature help also appears automatically while typing function or method argume
 ### Theme Commands
 
 - `:FocusMode` - Toggle focused editing mode
+- `:NvimBootstrap` - Install configured Mason packages and Treesitter parsers
 - `:ThemePicker` - Open theme picker
 - `:ThemeCycle` - Cycle to next theme
 - `:ToggleTransparency` - Toggle theme transparency

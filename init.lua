@@ -1,68 +1,55 @@
--- bootstrap lazy and all plugins
-local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
 require "options"
 require "autocmds"
 
-if not vim.uv.fs_stat(lazypath) then
-    local repo = "https://github.com/folke/lazy.nvim.git"
-    vim.fn.system { "git", "clone", "--filter=blob:none", repo, "--branch=stable", lazypath }
+local lazypath = vim.fs.joinpath(vim.fn.stdpath("data"), "lazy", "lazy.nvim")
+
+local function bootstrap_lazy()
+  if vim.uv.fs_stat(lazypath) then
+    return true
+  end
+
+  local output = vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable",
+    lazypath,
+  })
+
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_err_writeln("Failed to bootstrap lazy.nvim:\n" .. output)
+    return false
+  end
+
+  return true
+end
+
+if not bootstrap_lazy() then
+  return
 end
 
 vim.opt.rtp:prepend(lazypath)
 
--- load plugins
-require("lazy").setup({
-    -- Themes
-    { require "configs.themes.catppuccin" },
-    { require "configs.themes.gruvbox" },
-    { require "configs.themes.rose-pine" },
-    { require "configs.themes.cyberdream" },
+local ok, lazy = pcall(require, "lazy")
+if not ok then
+  vim.api.nvim_err_writeln("Failed to load lazy.nvim: " .. lazy)
+  return
+end
 
-    -- Plugins
-    { "nvim-lua/plenary.nvim" }, -- Utility library (dependency for many plugins)
-    { require "configs.lspkind" },
-    { require "configs.web-icons" },
-    { require "configs.which-key" },
-    { require "configs.mason" },
-    { require "configs.lsp-signature" },
-    { require "configs.lspconfig" },
-    { require "configs.cmp" },
-    { require "configs.treesitter" },
-    { require "configs.conform" },
-    { require "configs.dap.init" },
-    { require "configs.lualine" },
-    { require "configs.autopairs" },
-    { require "configs.nvim-lint" },
-    { require "configs.nvim-ufo" },
-    { require "configs.harpoon" },
-    { require "configs.persistence" },
-    { require "configs.breadcrumbs" },
-    { require "configs.languages.ruby.init" },
-    { require "configs.copilot" },
-    { require "configs.neotest" },
-    { require "configs.alpha-nvim" },
-    { require "configs.nvim-tree" },
-    { require "configs.oil-nvim" },
-    { require "configs.mini-indentscope" },
-    { require "configs.toggleterm" },
-    { require "configs.gitsigns" },
-    { require "configs.nvim-scrollbar" },
-    { require "configs.mini-map" },
-    { require "configs.trouble" },
-    { require "configs.gitlinker" },
-    { require "configs.codeowners" },
-    { require "configs.snacks" },
-    { require "configs.diffview" },
-    { require "configs.twilight" },
-    { require "configs.render-markdown" },
-    { require "configs.todo" },
-    { require "configs.leap" },
-    { require "configs.avante" },
-})
+lazy.setup(require("plugins"))
 
--- Initialize theme picker
-require("configs.theme-picker").setup()
+local theme_picker = require("configs.theme-picker")
+theme_picker.load_startup_theme()
+theme_picker.register_ui()
+
+vim.api.nvim_create_user_command("NvimBootstrap", function()
+  require("utils.bootstrap").run()
+end, { desc = "Install configured Neovim tools and parsers" })
+
+require("configs.languages.go.test").setup_keymaps()
+require("configs.languages.ruby.test").setup_keymaps()
 
 vim.schedule(function()
-    require "mappings"
+  require "mappings"
 end)

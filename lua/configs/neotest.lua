@@ -9,13 +9,6 @@ local M = {
     "nvim-neotest/neotest-jest",
     "nvim-neotest/neotest-go",
     "rouge8/neotest-rust",
-    {
-      "fredrikaverpil/neotest-golang",
-      version = "*",                                                            -- Optional, but recommended; track releases
-      build = function()
-        vim.system({ "go", "install", "gotest.tools/gotestsum@latest" }):wait() -- Optional, but recommended
-      end,
-    },
     "olimorris/neotest-rspec",
   },
 }
@@ -23,7 +16,7 @@ local M = {
 M.config = function()
   local neotest = require("neotest")
   neotest.setup({
-    log_level = vim.log.levels.DEBUG,
+    log_level = vim.log.levels.INFO,
     discovery = {
       enabled = true, -- Auto-discover tests in all supported languages
       concurrent = 8,
@@ -34,15 +27,6 @@ M.config = function()
     adapters = {
       require("neotest-jest"),
       require("neotest-rust"),
-      -- require("neotest-golang")({
-      --   -- runner = "gotestsum",
-      --   dap_go_enabled = true,
-      --   go_test_args = {
-      --     "-v",
-      --     "-race",
-      --     "-count=1",
-      --   }
-      -- }),
       require("neotest-go")({
         experimental = {
           test_table = true,
@@ -82,13 +66,6 @@ M.config = function()
       watching = "󰈈",
     },
   })
-
-  -- Language-specific test keymaps
-  -- (in configs/languages/{lang}/test.lua)
-  require("configs.languages.ruby.test").setup_keymaps()
-
-  -- Note: Neotest auto-discovers tests when opening test files
-  -- Manual discovery keymaps still available via <leader>ts in language configs
 end
 
 

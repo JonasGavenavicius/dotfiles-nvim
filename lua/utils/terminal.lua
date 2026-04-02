@@ -1,5 +1,11 @@
 -- Terminal utilities for running programs
 local M = {}
+local FLOAT_OPTS = {
+  border = "rounded",
+  width = 120,
+  height = 30,
+  winblend = 3,
+}
 
 -- Helper to load language-specific modules
 local function load_language_module(filetype)
@@ -50,6 +56,31 @@ local function select_executable(executables, callback)
   end)
 end
 
+function M.get_float_opts()
+  return vim.deepcopy(FLOAT_OPTS)
+end
+
+function M.is_readable_file(path)
+  return path ~= "" and vim.fn.filereadable(path) == 1
+end
+
+function M.escape_shell_args(raw_args)
+  if not raw_args or raw_args == "" then
+    return ""
+  end
+
+  local escaped = {}
+  for _, arg in ipairs(vim.split(raw_args, "%s+", { trimempty = true })) do
+    table.insert(escaped, vim.fn.shellescape(arg))
+  end
+
+  return table.concat(escaped, " ")
+end
+
+function M.with_pause(command)
+  return command .. [[; echo ""; read -n 1 -s -r -p "Press any key to close..."]]
+end
+
 -- Default run commands for different file types
 M.run_commands = {
   go = function(file) return "go run " .. vim.fn.shellescape(file) end,
@@ -78,6 +109,7 @@ M.get_run_terminal = function()
 
     run_terminal = Terminal.Terminal:new({
       direction = "float",
+      float_opts = M.get_float_opts(),
       close_on_exit = false,
       on_exit = function() run_terminal = nil end,
     })
@@ -101,6 +133,7 @@ M.get_named_terminal = function(name, opts)
 
   local term = Terminal.Terminal:new(vim.tbl_extend("force", {
     direction = "float",
+    float_opts = M.get_float_opts(),
     close_on_exit = false,
     on_exit = function()
       named_terminals[name] = nil
@@ -117,7 +150,7 @@ end
 -- Run current file with default command
 M.run_current_file = function()
   local file = vim.fn.expand("%:p")
-  if file == "" or not vim.fn.filereadable(file) then
+  if not M.is_readable_file(file) then
     vim.notify("No valid file to run", vim.log.levels.WARN)
     return
   end
@@ -130,12 +163,10 @@ M.run_current_file = function()
   end
 
   local cmd = command_fn(file)
-  -- Add pause after execution
-  cmd = cmd .. [[; echo ""; read -n 1 -s -r -p "Press any key to close..."]]
 
   local terminal = M.get_run_terminal()
   if terminal then
-    terminal.cmd = cmd
+    terminal.cmd = M.with_pause(cmd)
     terminal:toggle()
   end
 end
@@ -143,7 +174,7 @@ end
 -- Run program with custom arguments
 M.run_with_arguments = function()
   local file = vim.fn.expand("%:p")
-  if file == "" or not vim.fn.filereadable(file) then
+  if not M.is_readable_file(file) then
     vim.notify("No valid file to run", vim.log.levels.WARN)
     return
   end
@@ -164,8 +195,7 @@ M.run_with_arguments = function()
     if command and command ~= "" then
       local terminal = M.get_run_terminal()
       if terminal then
-        -- Add pause after execution
-        terminal.cmd = command .. [[; echo ""; read -n 1 -s -r -p "Press any key to close..."]]
+        terminal.cmd = M.with_pause(command)
         terminal:toggle()
       end
     end
@@ -175,7 +205,7 @@ end
 -- Run project (smart, language-aware)
 M.run_project = function()
   local file = vim.fn.expand("%:p")
-  if file == "" or not vim.fn.filereadable(file) then
+  if not M.is_readable_file(file) then
     vim.notify("No valid file to run", vim.log.levels.WARN)
     return
   end
@@ -209,7 +239,7 @@ end
 -- Run project with arguments (smart, language-aware)
 M.run_project_with_arguments = function()
   local file = vim.fn.expand("%:p")
-  if file == "" or not vim.fn.filereadable(file) then
+  if not M.is_readable_file(file) then
     vim.notify("No valid file to run", vim.log.levels.WARN)
     return
   end
@@ -255,7 +285,7 @@ end
 -- Build project (smart, language-aware)
 M.build_project = function()
   local file = vim.fn.expand("%:p")
-  if file == "" or not vim.fn.filereadable(file) then
+  if not M.is_readable_file(file) then
     vim.notify("No valid file to run", vim.log.levels.WARN)
     return
   end

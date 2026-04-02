@@ -1,5 +1,6 @@
 -- DAP helper functions for smart debugging
 local M = {}
+local terminal_utils = require("utils.terminal")
 
 -- Smart Go debugging with executable selection
 function M.debug_go_smart()
@@ -7,7 +8,7 @@ function M.debug_go_smart()
   local go_utils = require("configs.languages.go.run")
 
   local file = vim.fn.expand("%:p")
-  if file == "" or not vim.fn.filereadable(file) then
+  if not terminal_utils.is_readable_file(file) then
     vim.notify("No valid file", vim.log.levels.WARN)
     return
   end

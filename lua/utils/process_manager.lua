@@ -1,5 +1,6 @@
 -- Process manager for running multiple services simultaneously
 local M = {}
+local terminal_utils = require("utils.terminal")
 
 -- Service registry: tracks all managed processes
 -- Structure: { name = { name, terminal, pid, status, started_at, exit_code, cmd, path } }
@@ -16,11 +17,7 @@ local function get_service_terminal(name, cmd)
   local term = Terminal.Terminal:new({
     cmd = cmd,
     direction = "float",
-    float_opts = {
-      border = "curved",
-      width = 120,
-      height = 30,
-    },
+    float_opts = terminal_utils.get_float_opts(),
     close_on_exit = false,
     on_open = function(t)
       -- Store PID when terminal opens
@@ -28,7 +25,7 @@ local function get_service_terminal(name, cmd)
         services[name].pid = t.job_id
       end
     end,
-    on_exit = function(t, job, exit_code, _)
+    on_exit = function(_, _, exit_code, _)
       M.on_service_exit(name, exit_code)
     end,
   })

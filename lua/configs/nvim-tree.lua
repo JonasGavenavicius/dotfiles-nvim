@@ -1,10 +1,16 @@
 local M = {
     "nvim-tree/nvim-tree.lua",
+    cmd = { "NvimTreeFindFile", "NvimTreeFocus", "NvimTreeOpen", "NvimTreeToggle" },
+    keys = {
+        { "<leader>el", "<cmd>NvimTreeToggle<CR>", desc = "Toggle project sidebar" },
+    },
     dependencies = { "nvim-tree/nvim-web-devicons" }, -- optional icons
     config = function()
         local TREE_WIDTH = 38
         
         require("nvim-tree").setup({
+            disable_netrw = false,
+            hijack_netrw = false,
             view = {
               width = TREE_WIDTH,
             },
@@ -20,8 +26,6 @@ local M = {
               ignore_list = {},
             },
           })
-  
-      vim.keymap.set('n', '<leader>el', ':NvimTreeToggle<CR>', { desc = "Toggle project sidebar" })
     end,
   }
 

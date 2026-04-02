@@ -8,7 +8,7 @@ Neovim configuration with 40+ plugins. Built with Lua and managed by [lazy.nvim]
 # Clone the configuration
 git clone <your-repo-url> ~/.config/nvim
 
-# Launch Neovim - plugins will install automatically
+# Launch Neovim, then run :NvimBootstrap once to install tools/parsers
 nvim
 ```
 
@@ -74,7 +74,7 @@ nvim
 
 | Language | LSP | Debug | Format | Lint | Test |
 |----------|-----|-------|--------|------|------|
-| **Go** | ✅ gopls | ✅ DAP | ✅ gofumpt | ✅ golangci_lint | ❌ |
+| **Go** | ✅ gopls | ✅ DAP | ✅ gofumpt | ✅ golangci_lint | ✅ Neotest + terminal |
 | **Rust** | ✅ rust-analyzer | ✅ codelldb | ✅ rustfmt | ✅ | ✅ Neotest |
 | **Ruby** | ✅ ruby-lsp | ✅ readapt | ✅ rubocop | ✅ rubocop | ✅ RSpec |
 | **JavaScript/TS** | ✅ | ❌ | ✅ prettier | ✅ eslint_d | ✅ Jest |
@@ -83,7 +83,7 @@ nvim
 
 ### LSP Setup
 
-- Mason auto-installs language servers
+- Mason is configured for explicit installs via `:NvimBootstrap` or `:Mason`
 - nvim-cmp integration
 - Keymaps: `ga` (code actions), `grl` (diagnostics)
 - Language-specific configs for Go, Rust, Ruby
@@ -110,6 +110,7 @@ nvim/
 ### Package Management
 - `:Lazy`: Open plugin manager
 - `:Mason`: Open LSP/tool installer
+- `:NvimBootstrap`: Install configured Mason packages and Treesitter parsers
 
 ### AI Setup
 ```bash
@@ -141,7 +142,7 @@ export ANTHROPIC_API_KEY="your-key"
 
 ## Troubleshooting
 
-**LSP not working**: Run `:Mason` and install missing language servers
+**LSP not working**: Run `:NvimBootstrap` or install missing tools via `:Mason`
 **Formatters not found**: Install external tools (prettier, stylua, etc.)
 **Tests not detected**: Ensure test frameworks available in project  
 **Icons missing**: Install a Nerd Font in terminal
@@ -155,4 +156,3 @@ export ANTHROPIC_API_KEY="your-key"
 - **LSP**: Modify `lua/configs/lspconfig.lua` for language-specific settings
 
 ---
-

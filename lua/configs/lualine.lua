@@ -1,5 +1,6 @@
 local M = {
   "nvim-lualine/lualine.nvim",
+  event = "VeryLazy",
 }
 
 local function highlight_color(groups, attr, fallback)

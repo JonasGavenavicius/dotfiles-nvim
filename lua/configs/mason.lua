@@ -1,5 +1,6 @@
 local M = {
   'williamboman/mason.nvim',
+  cmd = { "Mason", "MasonInstall", "MasonLog", "MasonUninstall", "MasonUpdate" },
   dependencies = {
     'williamboman/mason-lspconfig.nvim',
     'nvim-lua/plenary.nvim',
@@ -16,21 +17,21 @@ M.servers = {
   "gopls",
 }
 
+M.dap_adapters = {
+  "codelldb",
+}
+
 function M.config()
   require("mason").setup()
   require("mason-lspconfig").setup({
-    ensure_installed = M.servers,
-    automatic_installation = true,
-    handlers = {
-      -- Disable automatic server setup - we configure manually in lspconfig.lua
-      function(server_name)
-        -- Do nothing - prevents automatic server initialization
-      end,
-    },
+    ensure_installed = {},
+    automatic_installation = false,
+    automatic_enable = false,
   })
 
   require("mason-nvim-dap").setup({
-    ensure_installed = { "codelldb" }
+    ensure_installed = {},
+    automatic_installation = false,
   })
 end
 

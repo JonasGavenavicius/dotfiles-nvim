@@ -4,6 +4,7 @@ local DEFAULT_THEME = "catppuccin-mocha"
 
 -- Transparency state
 local transparency_enabled = false
+local ui_registered = false
 
 local function preference_paths()
     local data_path = vim.fn.stdpath("data")
@@ -158,7 +159,7 @@ function M.toggle_transparency()
 end
 
 -- Load saved theme preference
-local function load_saved_theme()
+function M.load_startup_theme()
     local theme_path, transparency_path = preference_paths()
     local saved_transparency = parse_saved_transparency(read_file(transparency_path))
     if saved_transparency ~= nil then
@@ -209,17 +210,17 @@ function M.cycle_theme()
     set_theme(theme_list[next_idx].cmd)
 end
 
--- Initialize theme system
-function M.setup()
-    -- Load saved theme on startup
-    load_saved_theme()
-    
-    -- Create user commands
+function M.register_ui()
+    if ui_registered then
+        return
+    end
+
+    ui_registered = true
+
     vim.api.nvim_create_user_command("ThemePicker", M.pick_theme, { desc = "Open theme picker" })
     vim.api.nvim_create_user_command("ThemeCycle", M.cycle_theme, { desc = "Cycle to next theme" })
     vim.api.nvim_create_user_command("ToggleTransparency", M.toggle_transparency, { desc = "Toggle theme transparency" })
-    
-    -- Set up keymaps
+
     local map = vim.keymap.set
     map("n", "<leader>uh", M.pick_theme, { desc = "Theme picker" })
     map("n", "<leader>uc", M.cycle_theme, { desc = "Cycle theme" })

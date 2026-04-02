@@ -1,5 +1,6 @@
 -- Go language support for smart project execution
 local M = {}
+local terminal_utils = require("utils.terminal")
 
 -- Helper function to find Go module root
 local function find_go_module_root(start_path)
@@ -73,6 +74,17 @@ function M.find_project_root(file)
   return find_go_module_root(file)
 end
 
+local function executable_target(executable)
+  local target = executable.relative or executable.path or "."
+  if target == "." then
+    return target
+  end
+  if target:sub(1, 1) == "/" or target:match("^%.") then
+    return target
+  end
+  return "./" .. target
+end
+
 -- Find all executable main packages in the project
 function M.find_executables(project_root)
   local executables = {}
@@ -125,22 +137,22 @@ function M.find_executables(project_root)
   return executables
 end
 
+function M.build_run_command(executable, project_root, args)
+  local command = string.format(
+    "cd %s && go run %s",
+    vim.fn.shellescape(project_root),
+    vim.fn.shellescape(executable_target(executable))
+  )
+  local escaped_args = terminal_utils.escape_shell_args(args)
+  if escaped_args ~= "" then
+    command = command .. " " .. escaped_args
+  end
+  return command
+end
+
 -- Run a specific executable
 function M.run_executable(executable, project_root, args)
-  args = args or ""
-  local cmd
-
-  if executable.relative == "." then
-    -- Run from module root
-    cmd = string.format("cd %s && go run . %s", vim.fn.shellescape(project_root), args)
-  else
-    -- Run from specific subdirectory
-    cmd = string.format("cd %s && go run ./%s %s", vim.fn.shellescape(project_root), executable.relative, args)
-  end
-
-  -- Add pause after execution
-  cmd = cmd .. [[; echo ""; read -n 1 -s -r -p "Press any key to close..."]]
-
+  local cmd = terminal_utils.with_pause(M.build_run_command(executable, project_root, args))
   local terminal = require("utils.terminal").get_run_terminal()
   if terminal then
     terminal.cmd = cmd
@@ -159,25 +171,14 @@ function M.build_executable(executable, project_root)
     end
 
     local cmd
-    if executable.relative == "." then
-      -- Build from module root
-      cmd = string.format("cd %s && go build -o %s .",
-        vim.fn.shellescape(project_root),
-        vim.fn.shellescape(binary_name))
-    else
-      -- Build from specific subdirectory
-      cmd = string.format("cd %s && go build -o %s ./%s",
-        vim.fn.shellescape(project_root),
-        vim.fn.shellescape(binary_name),
-        executable.relative)
-    end
-
-    -- Add pause after execution
-    cmd = cmd .. [[; echo ""; read -n 1 -s -r -p "Press any key to close..."]]
+    cmd = string.format("cd %s && go build -o %s %s",
+      vim.fn.shellescape(project_root),
+      vim.fn.shellescape(binary_name),
+      vim.fn.shellescape(executable_target(executable)))
 
     local terminal = require("utils.terminal").get_run_terminal()
     if terminal then
-      terminal.cmd = cmd
+      terminal.cmd = terminal_utils.with_pause(cmd)
       terminal:toggle()
     end
   end)
