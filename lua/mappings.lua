@@ -50,5 +50,3 @@ map("n", "<leader>sS", replace_cmd("%", false), { desc = "Replace in buffer (no 
 map("n", "<leader>ss", replace_cmd("%", true), { desc = "Replace in buffer (confirm each)" })
 map("n", "<leader>sG", replace_cmd("argdo", false), { desc = "Replace in quickfix files (no confirm)" })
 map("n", "<leader>sg", replace_cmd("argdo", true), { desc = "Replace in quickfix files (confirm each)" })
-
-

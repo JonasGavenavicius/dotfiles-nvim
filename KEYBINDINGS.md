@@ -107,8 +107,11 @@
 | ------------ | ------------------------------------ | ------------- |
 | `<leader>lf` | Copy relative file path to clipboard | Any buffer    |
 | `<leader>ll` | Trigger linting for current file     | Any buffer    |
+| `<leader>ls` | Show signature help                  | LSP buffer    |
 | `ga`         | Code Action                          | Normal/Visual |
 | `grl`        | Open File Diagnostics (Loclist)      | LSP buffer    |
+
+Signature help also appears automatically while typing function or method arguments in LSP-backed languages such as Go and Rust.
 
 ## 🚀 Run Commands (`<leader>r`)
 

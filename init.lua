@@ -24,6 +24,7 @@ require("lazy").setup({
     { require "configs.web-icons" },
     { require "configs.which-key" },
     { require "configs.mason" },
+    { require "configs.lsp-signature" },
     { require "configs.lspconfig" },
     { require "configs.cmp" },
     { require "configs.treesitter" },

@@ -24,6 +24,7 @@ return {
           return { buffer = bufnr, desc = "LSP: " .. desc }
         end
         vim.keymap.set({ "n", "v" }, "ga", vim.lsp.buf.code_action, opts("Code Action"))
+        vim.keymap.set("n", "<leader>ls", vim.lsp.buf.signature_help, opts("Show Signature Help"))
         vim.keymap.set("n", "grl", function()
           local current_bufname = vim.api.nvim_buf_get_name(0)
           if current_bufname:match("^%w+://") and not current_bufname:match("^file://") then

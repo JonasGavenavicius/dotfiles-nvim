@@ -9,7 +9,6 @@ return {
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
             "onsails/lspkind.nvim",
-            "ray-x/lsp_signature.nvim",
             "rafamadriz/friendly-snippets",
         },
     },
