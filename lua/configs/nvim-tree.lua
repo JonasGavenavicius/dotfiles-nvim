@@ -2,7 +2,7 @@ local M = {
     "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" }, -- optional icons
     config = function()
-        local TREE_WIDTH = 60
+        local TREE_WIDTH = 38
         
         require("nvim-tree").setup({
             view = {
@@ -21,7 +21,7 @@ local M = {
             },
           })
   
-      vim.keymap.set('n', '<leader>el', ':NvimTreeToggle<CR>', { desc = "Toggle nvim-tree file explorer" })
+      vim.keymap.set('n', '<leader>el', ':NvimTreeToggle<CR>', { desc = "Toggle project sidebar" })
     end,
   }
 

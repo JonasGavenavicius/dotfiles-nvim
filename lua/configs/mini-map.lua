@@ -27,8 +27,8 @@ local M = {
       window = {
         focusable = true,              -- Allow focusing minimap
         side = "right",                -- Position on right
-        show_integration_count = true, -- Show integration counts
-        width = 15,                    -- Width in columns
+        show_integration_count = false,
+        width = 10,
         winblend = 25,                 -- Transparency (matches theme)
       },
     })

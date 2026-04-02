@@ -198,18 +198,29 @@ Signature help also appears automatically while typing function or method argume
 
 | Key          | Action              | Description                   |
 | ------------ | ------------------- | ----------------------------- |
+| `<leader>uf` | Toggle focus mode   | Toggle Twilight focus mode    |
 | `<leader>uh` | Theme picker        | Open interactive theme picker |
 | `<leader>uc` | Cycle theme         | Cycle through all themes      |
 | `<leader>ut` | Toggle transparency | Toggle theme transparency     |
+
+### Minimap (`<leader>um`)
+
+| Key           | Action               | Description                  |
+| ------------- | -------------------- | ---------------------------- |
+| `<leader>umt` | Toggle minimap       | Show or hide minimap         |
+| `<leader>umr` | Refresh minimap      | Refresh minimap content      |
+| `<leader>umf` | Toggle minimap focus | Focus or return from minimap |
 
 ### Available Themes
 
 - **Catppuccin**: Latte, Frappe, Macchiato, Mocha
 - **Gruvbox**: Dark variant
 - **Rose Pine**: Main, Moon, Dawn
+- **Cyberdream**: Dark variant
 
 ### Theme Commands
 
+- `:FocusMode` - Toggle focused editing mode
 - `:ThemePicker` - Open theme picker
 - `:ThemeCycle` - Cycle to next theme
 - `:ToggleTransparency` - Toggle theme transparency

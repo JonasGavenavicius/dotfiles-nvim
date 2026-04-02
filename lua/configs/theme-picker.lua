@@ -1,47 +1,88 @@
 local M = {}
+local theme_setup = require("utils.theme_setup")
+local DEFAULT_THEME = "catppuccin-mocha"
 
 -- Transparency state
 local transparency_enabled = false
 
--- Theme-specific transparency configurations
-local function configure_theme_transparency(theme_cmd, transparent)
-    if theme_cmd:match("catppuccin") then
-        local ok, catppuccin = pcall(require, "catppuccin")
-        if ok then
-            catppuccin.setup({
-                transparent_background = transparent,
-            })
-        end
-    elseif theme_cmd:match("gruvbox") then
-        if transparent then
-            vim.g.gruvbox_transparent_bg = 1
-        else
-            vim.g.gruvbox_transparent_bg = 0
-        end
-    elseif theme_cmd:match("rose-pine") then
-        local ok, rose_pine = pcall(require, "rose-pine")
-        if ok then
-            rose_pine.setup({
-                styles = {
-                    transparency = transparent,
-                },
-            })
-        end
-    elseif theme_cmd:match("cyberdream") then
-        local ok, cyberdream = pcall(require, "cyberdream")
-        if ok then
-            cyberdream.setup({
-                transparent = transparent,
-                italic_comments = true,
-                borderless_telescope = true,
-                terminal_colors = true,
-                cache = true,
-                theme = {
-                    variant = "default",
-                },
-            })
-        end
+local function preference_paths()
+    local data_path = vim.fn.stdpath("data")
+
+    return data_path .. "/theme_preference.lua", data_path .. "/transparency_preference.lua"
+end
+
+local function read_file(path)
+    local file = io.open(path, "r")
+    if not file then
+        return nil
     end
+
+    local content = file:read("*a")
+    file:close()
+
+    return content
+end
+
+local function write_file(path, content)
+    local file = io.open(path, "w")
+    if not file then
+        return false
+    end
+
+    file:write(content)
+    file:close()
+
+    return true
+end
+
+local function parse_saved_theme(content)
+    if not content or content == "" then
+        return nil
+    end
+
+    return content:match('return%s+["\']([^"\']+)["\']')
+        or content:match('colorscheme%(["\']([^"\']+)["\']%)')
+end
+
+local function parse_saved_transparency(content)
+    if not content then
+        return nil
+    end
+
+    if content:match("return%s+true") then
+        return true
+    end
+
+    if content:match("return%s+false") then
+        return false
+    end
+
+    return nil
+end
+
+local function save_preferences(theme_cmd)
+    local theme_path, transparency_path = preference_paths()
+
+    write_file(theme_path, string.format("return %q\n", theme_cmd))
+    write_file(transparency_path, string.format("return %s\n", tostring(transparency_enabled)))
+end
+
+local function apply_theme(theme_cmd)
+    local target_theme = theme_cmd or DEFAULT_THEME
+
+    vim.g.ui_transparency_enabled = transparency_enabled
+    theme_setup.configure(target_theme, transparency_enabled)
+
+    local ok = pcall(vim.cmd.colorscheme, target_theme)
+    if not ok then
+        target_theme = DEFAULT_THEME
+        theme_setup.configure(target_theme, transparency_enabled)
+        vim.cmd.colorscheme(target_theme)
+    end
+
+    vim.g.current_theme = target_theme
+
+    return target_theme
 end
 
 -- Available themes with their display names and colorscheme commands
@@ -98,66 +139,34 @@ end
 
 -- Set theme and save preference
 local function set_theme(theme_cmd)
-    -- Configure theme transparency before applying
-    configure_theme_transparency(theme_cmd, transparency_enabled)
-    
-    -- Apply the colorscheme
-    vim.cmd.colorscheme(theme_cmd)
-    
-    -- Save the preference to a file for persistence
-    local config_path = vim.fn.stdpath("data") .. "/theme_preference.lua"
-    local transparency_path = vim.fn.stdpath("data") .. "/transparency_preference.lua"
-    
-    local file = io.open(config_path, "w")
-    if file then
-        file:write(string.format('vim.cmd.colorscheme("%s")\n', theme_cmd))
-        file:close()
-    end
-    
-    -- Save transparency state
-    local trans_file = io.open(transparency_path, "w")
-    if trans_file then
-        trans_file:write(string.format('return %s\n', tostring(transparency_enabled)))
-        trans_file:close()
-    end
-    
-    -- Update the global variable for statusline
-    vim.g.current_theme = theme_cmd
-    
-    vim.notify("Theme changed to: " .. theme_cmd, vim.log.levels.INFO)
+    local applied_theme = apply_theme(theme_cmd)
+    save_preferences(applied_theme)
+
+    vim.notify("Theme changed to: " .. applied_theme, vim.log.levels.INFO)
 end
 
 -- Toggle transparency
 function M.toggle_transparency()
     transparency_enabled = not transparency_enabled
-    
-    -- Reapply current theme with new transparency setting
-    local current_theme = vim.g.colors_name or "catppuccin-mocha"
-    set_theme(current_theme)
-    
+
+    local current_theme = vim.g.current_theme or vim.g.colors_name or DEFAULT_THEME
+    local applied_theme = apply_theme(current_theme)
+    save_preferences(applied_theme)
+
     local status = transparency_enabled and "enabled" or "disabled"
     vim.notify("Transparency " .. status, vim.log.levels.INFO)
 end
 
 -- Load saved theme preference
 local function load_saved_theme()
-    -- Load transparency preference
-    local transparency_path = vim.fn.stdpath("data") .. "/transparency_preference.lua"
-    if vim.fn.filereadable(transparency_path) == 1 then
-        transparency_enabled = dofile(transparency_path)
+    local theme_path, transparency_path = preference_paths()
+    local saved_transparency = parse_saved_transparency(read_file(transparency_path))
+    if saved_transparency ~= nil then
+        transparency_enabled = saved_transparency
     end
-    
-    local config_path = vim.fn.stdpath("data") .. "/theme_preference.lua"
-    if vim.fn.filereadable(config_path) == 1 then
-        dofile(config_path)
-        -- Apply transparency to loaded theme
-        local current_theme = vim.g.colors_name or "catppuccin-mocha"
-        configure_theme_transparency(current_theme, transparency_enabled)
-    else
-        -- Default theme if no preference saved
-        configure_theme_transparency("catppuccin-mocha", transparency_enabled)
-        vim.cmd.colorscheme("catppuccin-mocha")
-    end
+
+    local saved_theme = parse_saved_theme(read_file(theme_path)) or DEFAULT_THEME
+    apply_theme(saved_theme)
 end
 
 -- Theme picker using vim.ui.select

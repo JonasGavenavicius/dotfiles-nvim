@@ -5,6 +5,7 @@ local g = vim.g
 
 g.mapleader = " "
 g.toggle_theme_icon = "   " -- Custom global var for UI (used in statusline, etc.)
+g.ui_transparency_enabled = false
 
 opt.termguicolors = true
 
@@ -86,17 +87,17 @@ vim.diagnostic.config({
             [vim.diagnostic.severity.HINT]  = '󰌵', -- Hint sign
             [vim.diagnostic.severity.INFO]  = '', -- Info sign
         },
-        linehl = {
-            [vim.diagnostic.severity.ERROR] = 'ErrorMsg', -- Line highlight on error
-        },
-        numhl = {
-            [vim.diagnostic.severity.WARN] = 'WarningMsg', -- Number column highlight on warning
-        },
     },
-    underline = true,         -- Underline diagnostics
+    underline = false,
     update_in_insert = false, -- Don’t update diagnostics while typing
     severity_sort = true,     -- Sort diagnostics by severity
-    virtual_lines = {
-        current_line = true,  -- Only show virtual diagnostic lines on the current line
+    virtual_text = {
+        spacing = 2,
+        source = "if_many",
+        prefix = "●",
+    },
+    float = {
+        border = "rounded",
+        source = "if_many",
     },
 })

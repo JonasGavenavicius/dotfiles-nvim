@@ -35,14 +35,19 @@ local M = {
       }
 
       dashboard.section.buttons.val = {
-        dashboard.button("r", "🔃  Resume Last Session", ":lua require('persistence').load({ last = true })<CR>"),
-        dashboard.button("f", "🔎  Find file", ":lua require('snacks').picker.files()<CR>"),
-        dashboard.button("e", "📄  New file", ":ene <BAR> startinsert <CR>"),
-        dashboard.button("p", "🗂️  Find project", ":lua require('snacks').picker.recent()<CR>"),
-        dashboard.button("d", "📊  Git Diff View", ":DiffviewOpen<CR>"),
-        dashboard.button("h", "📈  Git File History", ":DiffviewFileHistory<CR>"),
-        dashboard.button("l", "🛠️  Lazy", ":Lazy<CR>"),
-        dashboard.button("q", "🚪  Quit NVIM", ":qa<CR>"),
+        dashboard.button("r", "󰋚  Resume session", ":lua require('persistence').load({ last = true })<CR>"),
+        dashboard.button("f", "󰱼  Find file", ":lua require('snacks').picker.files()<CR>"),
+        dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
+        dashboard.button("p", "󰄉  Recent files", ":lua require('snacks').picker.recent()<CR>"),
+        dashboard.button("d", "󰕴  Diff view", ":DiffviewOpen<CR>"),
+        dashboard.button("h", "󰊢  File history", ":DiffviewFileHistory<CR>"),
+        dashboard.button("l", "󰒲  Lazy", ":Lazy<CR>"),
+        dashboard.button("q", "󰈆  Quit", ":qa<CR>"),
+      }
+      dashboard.section.buttons.opts.spacing = 1
+      dashboard.section.footer.val = {
+        "",
+        "Press <space> to browse commands",
       }
 
       dashboard.opts.opts.noautocmd = true

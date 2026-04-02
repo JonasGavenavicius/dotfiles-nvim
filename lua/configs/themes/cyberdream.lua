@@ -5,22 +5,7 @@ local M = {
 }
 
 M.config = function()
-    require("cyberdream").setup({
-        -- Enable transparency management (theme-picker will control this)
-        transparent = false,
-
-        -- Theme appearance
-        italic_comments = true,
-        hide_fillchars = false,
-        borderless_telescope = true,
-        terminal_colors = true,
-        cache = true,
-
-        -- Use default variant (dark, high-contrast)
-        theme = {
-            variant = "default",
-        },
-    })
+    require("utils.theme_setup").configure("cyberdream", vim.g.ui_transparency_enabled == true)
 
     -- Don't set colorscheme here - let theme picker handle it
 end

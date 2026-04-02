@@ -19,6 +19,7 @@ local M = {
             { "<leader>tr", group = "Test Ruby" },
             { "<leader>ts", group = "Test Scan" },
             { "<leader>u", group = "UI/Theme" },
+            { "<leader>um", group = "Minimap" },
             { "gr", group = "References" },
         },
     },
@@ -34,4 +35,3 @@ local M = {
 }
 
 return M
-
