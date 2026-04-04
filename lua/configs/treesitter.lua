@@ -6,6 +6,7 @@ local M = {
 
 M.parsers = {
   "bash",
+  "css",
   "csv",
   "dockerfile",
   "gitignore",
@@ -13,6 +14,7 @@ M.parsers = {
   "gomod",
   "gosum",
   "gowork",
+  "html",
   "javascript",
   "json",
   "lua",
@@ -24,6 +26,10 @@ M.parsers = {
   "rust",
   "sql",
   "svelte",
+  "tsx",
+  "typescript",
+  "vim",
+  "vimdoc",
   "yaml",
 }
 
@@ -38,7 +44,7 @@ M.opts = {
 }
 
 function M.config(_, opts)
-  require("nvim-treesitter").setup(opts)
+  require("nvim-treesitter.configs").setup(opts)
 end
 
 return M
