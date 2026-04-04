@@ -200,6 +200,50 @@ local config = {
           }
         end,
       },
+      {
+        function()
+          local symbols = { error = " ", warn = " " }
+          local count = { errors = 0, warnings = 0 }
+
+          local diagnostics = vim.diagnostic.get()
+          for _, diagnostic in ipairs(diagnostics) do
+            if diagnostic.severity == vim.diagnostic.severity.ERROR then
+              count.errors = count.errors + 1
+            elseif diagnostic.severity == vim.diagnostic.severity.WARN then
+              count.warnings = count.warnings + 1
+            end
+          end
+
+          local result = "Proj: "
+          if count.errors > 0 then
+            result = result .. symbols.error .. count.errors .. " "
+          end
+          if count.warnings > 0 then
+            result = result .. symbols.warn .. count.warnings
+          end
+
+          return result
+        end,
+        cond = function()
+          local diagnostics = vim.diagnostic.get()
+          return #diagnostics > 0
+        end,
+        color = function()
+          local diagnostics = vim.diagnostic.get()
+          for _, diagnostic in ipairs(diagnostics) do
+            if diagnostic.severity == vim.diagnostic.severity.ERROR then
+              return {
+                fg = highlight_color({ "DiagnosticError", "ErrorMsg" }, "fg", "#f38ba8"),
+                gui = "bold",
+              }
+            end
+          end
+          return {
+            fg = highlight_color({ "DiagnosticWarn", "WarningMsg" }, "fg", "#fab387"),
+            gui = "bold",
+          }
+        end,
+      },
     },
     lualine_y = {
       {
