@@ -35,7 +35,7 @@ M.config = function()
       }),
       require("neotest-rspec")({
         rspec_cmd = function()
-          return vim.tbl_flatten({ "bundle", "exec", "rspec" })
+          return { "bundle", "exec", "rspec" }
         end,
         root_files = { "Gemfile", ".rspec", "spec" },
         filter_dirs = { ".git", "node_modules", "vendor", "tmp", "log", "public", "storage" },

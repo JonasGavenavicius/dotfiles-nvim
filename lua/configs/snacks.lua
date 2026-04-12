@@ -4,17 +4,30 @@ local M = {
   lazy = false,
   opts = {
     picker = {
-      -- layout = { preset = "ivy", layout = { position = "bottom" } },
+      layout = {
+        preset = "default",
+        layout = {
+          width = 0.94,
+          min_width = 160,
+          height = 0.92,
+          [2] = {
+            width = 0.58,
+            title = "{preview}",
+            title_pos = "center",
+          },
+        },
+      },
       win = {
         input = {
+          title_pos = "center",
           keys = {
             ["<C-t>"] = { "qflist", mode = { "i", "n" } },
             ["<C-h>"] = { "toggle_hidden", mode = { "i", "n" } },
-          }
-        }
-      }
-    }
-  }
+          },
+        },
+      },
+    },
+  },
 }
 
 M.config = function(_, opts)

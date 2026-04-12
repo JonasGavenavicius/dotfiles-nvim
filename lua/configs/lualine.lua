@@ -51,7 +51,64 @@ local function mode_color()
     t = { "PreProc", "Identifier" },
   }
 
-  return highlight_color(colors[vim.fn.mode()] or { "Identifier", "Function" }, "fg", "#7aa2f7")
+  return highlight_color(colors[vim.fn.mode()] or { "Identifier", "Function" }, "fg", "#8aadf4")
+end
+
+local function mode_label()
+  local labels = {
+    n = "NORMAL",
+    i = "INSERT",
+    v = "VISUAL",
+    [""] = "V-BLOCK",
+    V = "V-LINE",
+    c = "COMMAND",
+    r = "PROMPT",
+    R = "REPLACE",
+    s = "SELECT",
+    S = "S-LINE",
+    t = "TERMINAL",
+  }
+
+  return labels[vim.fn.mode()] or vim.fn.mode():upper()
+end
+
+local function surface_color()
+  return highlight_color({ "NormalFloat", "StatusLine", "Normal" }, "bg", "#24273a")
+end
+
+local function base_background()
+  return highlight_color({ "Normal", "StatusLine" }, "bg", "#1e2030")
+end
+
+local function text_color()
+  return highlight_color({ "Normal", "Identifier" }, "fg", "#cad3f5")
+end
+
+local function muted_color()
+  return highlight_color({ "Comment", "LineNr" }, "fg", "#6e738d")
+end
+
+local function accent_color()
+  return highlight_color({ "Type", "Identifier" }, "fg", "#c6a0f6")
+end
+
+local function info_color()
+  return highlight_color({ "Special", "Type" }, "fg", "#91d7e3")
+end
+
+local function surface_spec(fg, extra)
+  local spec = {
+    fg = fg,
+    bg = surface_color(),
+  }
+
+  if extra then
+    for key, value in pairs(extra) do
+      spec[key] = value
+    end
+  end
+
+  return spec
 end
 
 local function current_lsp()
@@ -106,21 +163,16 @@ local config = {
     lualine_a = {
       {
         function()
-          return "▍"
+          return " " .. mode_label()
         end,
         color = function()
-          return { fg = mode_color() }
+          return {
+            fg = base_background(),
+            bg = mode_color(),
+            gui = "bold",
+          }
         end,
-        padding = { left = 0, right = 1 },
-      },
-      {
-        function()
-          return ""
-        end,
-        color = function()
-          return { fg = mode_color(), gui = "bold" }
-        end,
-        padding = { left = 0, right = 1 },
+        padding = { left = 1, right = 3 },
       },
     },
     lualine_b = {
@@ -130,38 +182,28 @@ local config = {
         cond = conditions.buffer_not_empty,
         file_status = true,
         newfile_status = true,
+        shorting_target = 40,
         symbols = {
           modified = " ●",
           readonly = " 󰌾",
-          unnamed = "[No Name]",
-          newfile = " [New]",
+          unnamed = "Untitled",
+          newfile = " [new]",
         },
         color = function()
-          return {
-            fg = highlight_color({ "Directory", "Title" }, "fg", "#7aa2f7"),
-            gui = "bold",
-          }
+          return surface_spec(text_color(), { gui = "bold" })
         end,
+        padding = { left = 2, right = 3 },
       },
     },
     lualine_c = {
       {
-        "diagnostics",
-        sources = { "nvim_diagnostic" },
-        sections = { "error", "warn", "info", "hint" },
-        symbols = {
-          error = " ",
-          warn = " ",
-          info = " ",
-          hint = "󰌵 ",
-        },
-      },
-    },
-    lualine_x = {
-      {
         "branch",
-        icon = "",
+        icon = "",
         cond = conditions.git_workspace,
+        color = function()
+          return surface_spec(muted_color())
+        end,
+        padding = { left = 1, right = 3 },
       },
       {
         "diff",
@@ -173,19 +215,62 @@ local config = {
           modified = " ",
           removed = " ",
         },
+        color = function()
+          return surface_spec(muted_color())
+        end,
+        padding = { left = 0, right = 3 },
+      },
+      {
+        "filetype",
+        colored = true,
+        icon_only = false,
+        cond = conditions.wide,
+        color = function()
+          return surface_spec(muted_color())
+        end,
+        padding = { left = 0, right = 2 },
+      },
+    },
+    lualine_x = {
+      {
+        "diagnostics",
+        sources = { "nvim_diagnostic" },
+        sections = { "error", "warn", "info", "hint" },
+        symbols = {
+          error = " ",
+          warn = " ",
+          info = " ",
+          hint = "󰌵 ",
+        },
+        color = function()
+          return surface_spec(text_color())
+        end,
+        diagnostics_color = {
+          error = function()
+            return surface_spec(highlight_color({ "DiagnosticError", "ErrorMsg" }, "fg", "#ed8796"), { gui = "bold" })
+          end,
+          warn = function()
+            return surface_spec(highlight_color({ "DiagnosticWarn", "WarningMsg" }, "fg", "#eed49f"), { gui = "bold" })
+          end,
+          info = function()
+            return surface_spec(highlight_color({ "DiagnosticInfo", "Identifier" }, "fg", "#91d7e3"))
+          end,
+          hint = function()
+            return surface_spec(highlight_color({ "DiagnosticHint", "Identifier" }, "fg", "#8bd5ca"))
+          end,
+        },
+        padding = { left = 1, right = 3 },
       },
       {
         current_lsp,
         icon = "",
         cond = function()
-          return current_lsp() ~= ""
+          return current_lsp() ~= "" and conditions.wide()
         end,
         color = function()
-          return {
-            fg = highlight_color({ "Identifier", "Function" }, "fg", "#7aa2f7"),
-            gui = "bold",
-          }
+          return surface_spec(accent_color(), { gui = "bold" })
         end,
+        padding = { left = 0, right = 3 },
       },
       {
         current_codeowner,
@@ -194,55 +279,9 @@ local config = {
           return conditions.ultra() and current_codeowner() ~= ""
         end,
         color = function()
-          return {
-            fg = highlight_color({ "Special", "Type" }, "fg", "#c678dd"),
-            gui = "bold",
-          }
+          return surface_spec(info_color(), { gui = "bold" })
         end,
-      },
-      {
-        function()
-          local symbols = { error = " ", warn = " " }
-          local count = { errors = 0, warnings = 0 }
-
-          local diagnostics = vim.diagnostic.get()
-          for _, diagnostic in ipairs(diagnostics) do
-            if diagnostic.severity == vim.diagnostic.severity.ERROR then
-              count.errors = count.errors + 1
-            elseif diagnostic.severity == vim.diagnostic.severity.WARN then
-              count.warnings = count.warnings + 1
-            end
-          end
-
-          local result = "Proj: "
-          if count.errors > 0 then
-            result = result .. symbols.error .. count.errors .. " "
-          end
-          if count.warnings > 0 then
-            result = result .. symbols.warn .. count.warnings
-          end
-
-          return result
-        end,
-        cond = function()
-          local diagnostics = vim.diagnostic.get()
-          return #diagnostics > 0
-        end,
-        color = function()
-          local diagnostics = vim.diagnostic.get()
-          for _, diagnostic in ipairs(diagnostics) do
-            if diagnostic.severity == vim.diagnostic.severity.ERROR then
-              return {
-                fg = highlight_color({ "DiagnosticError", "ErrorMsg" }, "fg", "#f38ba8"),
-                gui = "bold",
-              }
-            end
-          end
-          return {
-            fg = highlight_color({ "DiagnosticWarn", "WarningMsg" }, "fg", "#fab387"),
-            gui = "bold",
-          }
-        end,
+        padding = { left = 0, right = 2 },
       },
     },
     lualine_y = {
@@ -251,6 +290,10 @@ local config = {
         cond = function()
           return conditions.wide() and conditions.buffer_not_empty()
         end,
+        color = function()
+          return surface_spec(muted_color())
+        end,
+        padding = { left = 1, right = 3 },
       },
       {
         current_fileformat,
@@ -258,8 +301,9 @@ local config = {
           return conditions.ultra() or current_fileformat() ~= "UNIX"
         end,
         color = function()
-          return { fg = highlight_color({ "Comment", "LineNr" }, "fg", "#808080") }
+          return surface_spec(muted_color())
         end,
+        padding = { left = 0, right = 3 },
       },
       {
         current_encoding,
@@ -267,14 +311,25 @@ local config = {
           return conditions.ultra() or current_encoding() ~= "UTF-8"
         end,
         color = function()
-          return { fg = highlight_color({ "Comment", "LineNr" }, "fg", "#808080") }
+          return surface_spec(muted_color())
         end,
+        padding = { left = 0, right = 2 },
       },
     },
     lualine_z = {
       {
+        "progress",
+        color = function()
+          return surface_spec(muted_color())
+        end,
+        padding = { left = 1, right = 3 },
+      },
+      {
         "location",
-        padding = { left = 1, right = 1 },
+        color = function()
+          return surface_spec(text_color(), { gui = "bold" })
+        end,
+        padding = { left = 0, right = 1 },
       },
     },
   },
@@ -286,10 +341,18 @@ local config = {
         "filename",
         path = 0,
         cond = conditions.buffer_not_empty,
+        color = function()
+          return { fg = muted_color() }
+        end,
       },
     },
     lualine_x = {
-      { "location" },
+      {
+        "location",
+        color = function()
+          return { fg = muted_color() }
+        end,
+      },
     },
     lualine_y = {},
     lualine_z = {},

@@ -3,6 +3,10 @@ require "autocmds"
 
 local lazypath = vim.fs.joinpath(vim.fn.stdpath("data"), "lazy", "lazy.nvim")
 
+local function echo_error(message)
+  vim.api.nvim_echo({ { message, "ErrorMsg" } }, true, { err = true })
+end
+
 local function bootstrap_lazy()
   if vim.uv.fs_stat(lazypath) then
     return true
@@ -18,7 +22,7 @@ local function bootstrap_lazy()
   })
 
   if vim.v.shell_error ~= 0 then
-    vim.api.nvim_err_writeln("Failed to bootstrap lazy.nvim:\n" .. output)
+    echo_error("Failed to bootstrap lazy.nvim:\n" .. output)
     return false
   end
 
@@ -33,7 +37,7 @@ vim.opt.rtp:prepend(lazypath)
 
 local ok, lazy = pcall(require, "lazy")
 if not ok then
-  vim.api.nvim_err_writeln("Failed to load lazy.nvim: " .. lazy)
+  echo_error("Failed to load lazy.nvim: " .. lazy)
   return
 end
 
@@ -42,6 +46,7 @@ lazy.setup(require("plugins"))
 local theme_picker = require("configs.theme-picker")
 theme_picker.load_startup_theme()
 theme_picker.register_ui()
+require("utils.ui").setup()
 
 vim.api.nvim_create_user_command("NvimBootstrap", function()
   require("utils.bootstrap").run()
@@ -49,6 +54,7 @@ end, { desc = "Install configured Neovim tools and parsers" })
 
 require("configs.languages.go.test").setup_keymaps()
 require("configs.languages.ruby.test").setup_keymaps()
+require("utils.git_worktree").setup()
 
 vim.schedule(function()
   require "mappings"

@@ -61,10 +61,10 @@ function M.setup_keymaps()
       local map = vim.keymap.set
 
       map("n", "<leader>trn", M.run_nearest_test_in_terminal,
-        { buffer = bufnr, desc = "Run nearest Ruby test in terminal" })
+        { buf = bufnr, desc = "Run nearest Ruby test in terminal" })
 
       map("n", "<leader>trk", M.kill_rspec_processes,
-        { buffer = bufnr, desc = "Kill all running RSpec tests" })
+        { buf = bufnr, desc = "Kill all running RSpec tests" })
     end,
   })
 end

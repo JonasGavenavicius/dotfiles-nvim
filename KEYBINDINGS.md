@@ -240,6 +240,16 @@ Signature help also appears automatically while typing function or method argume
 | `<control> f` | scroll down          | Snacks   |
 | `<control> b` | scroll up            | Snacks   |
 | `<leader>ghp` | Preview hunk changes | Gitsigns |
+| `<leader>ghd` | Diff current buffer  | Gitsigns |
+| `<leader>ghq` | Repository hunks     | Gitsigns |
+| `ih`          | Select git hunk      | Gitsigns |
+
+### Git Worktrees (`<leader>gw`)
+
+| Key           | Action           | Notes                                            |
+| ------------- | ---------------- | ------------------------------------------------ |
+| `<leader>gwl` | List/switch      | Shows all worktrees, switches cwd, opens Snacks  |
+| `<leader>gwc` | Create worktree  | Prompts for branch, path, and start point        |
 
 ### Git Hunk Actions
 
@@ -258,15 +268,68 @@ Signature help also appears automatically while typing function or method argume
 | `<leader>gbr` | Reset entire buffer | Gitsigns |
 | `<leader>gbl` | Toggle line blame   | Gitsigns |
 
+### Git Worktree Commands
+
+- `:GitWorktreeSwitch` - Open the worktree picker and switch the current tab to the selected worktree
+- `:GitWorktreeCreate` - Create a new worktree using prompted branch, path, and start point
+
+Switching worktrees is a clean handoff: if any buffer is modified, the switch is blocked until you save or discard those changes.
+
 ### Git Views & History
 
 | Key           | Action           | Plugin   |
 | ------------- | ---------------- | -------- |
 | `<leader>gd`  | Git Diffview     | Diffview |
+| `<leader>gD`  | Git Staged Diff  | Diffview |
+| `<leader>gm`  | Git Branch Diff  | Diffview |
+| `<leader>gq`  | Close Diffview   | Diffview |
 | `<leader>gh`  | Git File History | Diffview |
+| `<leader>gH`  | Current File History | Diffview |
 | `<leader>gwd` | Toggle Word Diff | Gitsigns |
 | `<leader>gt`  | Git Status       | Snacks   |
 | `<leader>gs`  | Git Log          | Snacks   |
+
+### Merge Conflicts (`<leader>gc`)
+
+| Key           | Action            | Plugin        |
+| ------------- | ----------------- | ------------- |
+| `]x`          | Next conflict     | git-conflict  |
+| `[x`          | Previous conflict | git-conflict  |
+| `<leader>gco` | Choose ours       | git-conflict  |
+| `<leader>gct` | Choose theirs     | git-conflict  |
+| `<leader>gcb` | Choose both       | git-conflict  |
+| `<leader>gc0` | Choose none       | git-conflict  |
+| `<leader>gcl` | List conflicts    | git-conflict  |
+
+### Fugitive Comparison (`<leader>gv`)
+
+Mirrors the Diffview suffixes so you can compare workflows directly.
+
+| Key           | Action                        | Plugin   |
+| ------------- | ----------------------------- | -------- |
+| `<leader>gvd` | Fugitive Diff                 | Fugitive |
+| `<leader>gvD` | Fugitive Staged Diff          | Fugitive |
+| `<leader>gvm` | Fugitive Branch Diff          | Fugitive |
+| `<leader>gvq` | Close Fugitive View           | Fugitive |
+| `<leader>gvh` | Fugitive Repo History         | Fugitive |
+| `<leader>gvH` | Fugitive Current File History | Fugitive |
+
+### Mini Diff Comparison (`<leader>gx`)
+
+`mini.diff` is hunk-focused, not a full diff/history UI. These maps keep it separate from `gitsigns`, `diffview`, and `fugitive`.
+
+| Key           | Action                  | Plugin    |
+| ------------- | ----------------------- | --------- |
+| `<leader>gxt` | Mini Diff Toggle        | mini.diff |
+| `<leader>gxo` | Mini Diff Overlay       | mini.diff |
+| `<leader>gxf` | Mini Diff First Hunk    | mini.diff |
+| `<leader>gxp` | Mini Diff Previous Hunk | mini.diff |
+| `<leader>gxn` | Mini Diff Next Hunk     | mini.diff |
+| `<leader>gxl` | Mini Diff Last Hunk     | mini.diff |
+| `<leader>gxa` | Mini Diff Apply Hunk    | mini.diff |
+| `<leader>gxr` | Mini Diff Reset Hunk    | mini.diff |
+| `<leader>gxq` | Mini Diff Current Hunks | mini.diff |
+| `<leader>gxQ` | Mini Diff All Hunks     | mini.diff |
 
 ### GitHub Integration
 
@@ -295,16 +358,14 @@ Signature help also appears automatically while typing function or method argume
 
 ---
 
-## 🤖 Copilot
+## 🤖 Copilot Completion
 
-| Key      | Action                        | Context           |
-| -------- | ----------------------------- | ----------------- |
-| `<C-a>`  | Accept suggestion/panel       | Insert mode       |
-| `<C-j>`  | Next suggestion/jump next     | Insert/panel mode |
-| `<C-k>`  | Previous suggestion/jump prev | Insert/panel mode |
-| `<C-e>`  | Dismiss suggestion            | Insert mode       |
-| `<M-CR>` | Open panel                    | Insert mode       |
-| `r`      | Refresh panel                 | Copilot panel     |
+| Key     | Action              | Context     |
+| ------- | ------------------- | ----------- |
+| `<C-a>` | Accept suggestion   | Insert mode |
+| `<C-j>` | Next suggestion     | Insert mode |
+| `<C-k>` | Previous suggestion | Insert mode |
+| `<C-e>` | Dismiss suggestion  | Insert mode |
 
 ---
 
@@ -315,20 +376,6 @@ Signature help also appears automatically while typing function or method argume
 | `zR` | Open all folds  | nvim-ufo |
 | `zM` | Close all folds | nvim-ufo |
 | `zK` | Peek Fold       | nvim-ufo |
-
----
-
-## 🤖 AI Assistance (`<leader>a`)
-
-### Avante (GPT/Claude)
-
-| Key          | Action           | Mode          |
-| ------------ | ---------------- | ------------- |
-| `<leader>aa` | Ask Avante       | Normal/Visual |
-| `<leader>ar` | Refresh Avante   | Normal        |
-| `<leader>ae` | Edit with Avante | Normal/Visual |
-
-**Note**: Requires `OPENAI_API_KEY` (primary) or `ANTHROPIC_API_KEY` (fallback)
 
 ---
 

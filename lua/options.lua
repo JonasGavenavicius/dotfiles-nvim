@@ -14,16 +14,26 @@ opt.termguicolors = true
 opt.cursorline = true
 opt.laststatus = 3
 opt.showmode = false
+opt.showtabline = 0
 opt.number = true
 opt.relativenumber = true
-opt.numberwidth = 2
+opt.numberwidth = 3
 opt.ruler = false
-opt.signcolumn = "yes"
+opt.signcolumn = "yes:1"
 opt.cursorlineopt = "number"
-opt.fillchars = { eob = " " }
+opt.fillchars = {
+  eob = " ",
+  foldopen = "",
+  foldclose = "",
+  foldsep = " ",
+  diff = "╱",
+  msgsep = " ",
+}
 opt.winborder = "rounded"
 opt.wrap = false
 opt.mouse = "a"
+opt.pumblend = 8
+opt.pumheight = 12
 local SCROLL_OFFSET = 10
 local SIDE_SCROLL_OFFSET = 8
 
@@ -57,6 +67,13 @@ local TIMEOUT_LEN = 400
 
 opt.timeoutlen = TIMEOUT_LEN
 opt.whichwrap:append("<>[]")
+opt.diffopt:append({
+  "vertical",
+  "algorithm:histogram",
+  "indent-heuristic",
+  "linematch:60",
+  "context:4",
+})
 
 -- FILE HANDLING -------------------------------------------------------------
 

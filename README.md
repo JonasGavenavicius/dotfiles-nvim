@@ -17,19 +17,18 @@ nvim
 ## Features
 
 - **LSP**: Language servers via Mason
-- **AI**: GitHub Copilot + Avante.nvim (GPT-4o/Claude)
+- **Completion**: nvim-cmp + GitHub Copilot suggestions
 - **Debug**: DAP for Go, Rust, Ruby
 - **Testing**: Neotest (Jest, RSpec, Go, Rust)
-- **Git**: Gitsigns, Diffview, Gitlinker
+- **Git**: Gitsigns, Diffview, Gitlinker, native worktree management
 - **Formatting/Linting**: Conform + nvim-lint
 - **Themes**: 3 themes, 8 variants, transparency toggle
 - **Files**: nvim-tree + Oil.nvim
 - **Navigation**: Harpoon 2, Leap, Snacks picker
-- **Completion**: nvim-cmp
 
 ## System Requirements
 
-- **Neovim**: ≥ 0.11.0
+- **Neovim**: ≥ 0.12.0
 - **Nerd Font**: For proper icon display
 
 ## External Dependencies
@@ -39,7 +38,6 @@ nvim
 - **curl/wget**: Package downloads (Mason)
 - **unzip, tar, gzip**: Archive extraction (Mason)
 - **ripgrep**: Fast searching (Snacks picker)
-- **make**: Building native extensions (Avante.nvim)
 - **Node.js**: JavaScript ecosystem tools (various formatters/linters)
 
 ### Language-Specific Tools
@@ -65,10 +63,8 @@ nvim
 #### Python
 - `black`, `isort`: Formatters (Conform)
 
-### AI Services
-- **GitHub Copilot**: Subscription + `:Copilot auth` (Copilot)
-- **OpenAI API**: `OPENAI_API_KEY` env var (Avante.nvim)
-- **Anthropic API**: `ANTHROPIC_API_KEY` env var (Avante.nvim fallback)
+### Optional AI Completion
+- **GitHub Copilot**: Subscription + `:Copilot auth`
 
 ## Language Support Matrix
 
@@ -112,19 +108,22 @@ nvim/
 - `:Mason`: Open LSP/tool installer
 - `:NvimBootstrap`: Install configured Mason packages and Treesitter parsers
 
-### AI Setup
+### Copilot Setup
 ```bash
-# Set API keys
-export OPENAI_API_KEY="your-key"
-export ANTHROPIC_API_KEY="your-key"
-
-# Authenticate Copilot
 :Copilot auth
 ```
 
 ### Theme Management
 - `:ThemePicker`: Interactive theme selection
 - `:ToggleTransparency`: Toggle transparency
+
+### Git Worktrees
+- `<leader>gwl`: List available worktrees and switch the current tab to the selected one
+- `<leader>gwc`: Create a new worktree by prompting for branch, path, and start point
+- `:GitWorktreeSwitch`: Open the worktree switcher
+- `:GitWorktreeCreate`: Open the worktree creation flow
+
+Worktree switching is intentionally safe: Neovim blocks the switch if any listed buffer has unsaved changes, and a successful switch clears the current project buffers before opening a Snacks file picker rooted at the target worktree.
 
 ### Formatting & Linting
 

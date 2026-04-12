@@ -108,16 +108,16 @@ function M.setup_keymaps()
       local map = vim.keymap.set
 
       map("n", "<leader>tgn", M.run_nearest_test_in_terminal,
-        { buffer = bufnr, desc = "Run nearest Go test in terminal" })
+        { buf = bufnr, desc = "Run nearest Go test in terminal" })
 
       map("n", "<leader>tgp", M.run_package_tests_in_terminal,
-        { buffer = bufnr, desc = "Run Go package tests in terminal" })
+        { buf = bufnr, desc = "Run Go package tests in terminal" })
 
       map("n", "<leader>tgc", M.run_tests_with_coverage,
-        { buffer = bufnr, desc = "Run Go tests with coverage" })
+        { buf = bufnr, desc = "Run Go tests with coverage" })
 
       map("n", "<leader>tgk", M.kill_go_test_processes,
-        { buffer = bufnr, desc = "Kill all running Go tests" })
+        { buf = bufnr, desc = "Kill all running Go tests" })
     end,
   })
 end

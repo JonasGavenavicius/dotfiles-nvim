@@ -3,10 +3,7 @@ local M = {
   name = "catppuccin", 
   priority = 1000,
   config = function()
-    require("utils.theme_setup").configure("catppuccin", vim.g.ui_transparency_enabled == true)
-
-    -- Setup must be called before loading the colorscheme
-    vim.cmd.colorscheme("catppuccin")
+    require("utils.theme_setup").configure("catppuccin-macchiato", vim.g.ui_transparency_enabled == true)
   end
 }
 

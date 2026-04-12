@@ -9,19 +9,63 @@ return {
       local util = require("lspconfig.util")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+      local function buffer_path(bufnr)
+        local name = vim.api.nvim_buf_get_name(bufnr)
+        if name == "" then
+          return nil
+        end
+
+        if name:match("^file://") then
+          return vim.uri_to_fname(name)
+        end
+
+        return name
+      end
+
+      local function is_lsp_eligible_buffer(bufnr)
+        local path = buffer_path(bufnr)
+        if not path or path == "" then
+          return false
+        end
+
+        if vim.bo[bufnr].buftype ~= "" then
+          return false
+        end
+
+        if path:match("^%w+://") then
+          return false
+        end
+
+        return true
+      end
+
+      local function root_dir_from_markers(markers)
+        local matcher = util.root_pattern(unpack(markers))
+
+        return function(bufnr, on_dir)
+          if not is_lsp_eligible_buffer(bufnr) then
+            return
+          end
+
+          local path = buffer_path(bufnr)
+          local root_dir = matcher(path)
+          if root_dir then
+            on_dir(root_dir)
+          end
+        end
+      end
+
       -- Setup run and service keymaps (extracted to separate modules)
       require("configs.keymaps.run").setup()
       require("configs.keymaps.services").setup()
 
       local on_attach = function(_, bufnr)
-        -- Don't attach LSP keymaps/handlers to special URI scheme buffers
-        local bufname = vim.api.nvim_buf_get_name(bufnr)
-        if bufname:match("^%w+://") and not bufname:match("^file://") then
+        if not is_lsp_eligible_buffer(bufnr) then
           return
         end
 
         local opts = function(desc)
-          return { buffer = bufnr, desc = "LSP: " .. desc }
+          return { buf = bufnr, desc = "LSP: " .. desc }
         end
         vim.keymap.set({ "n", "v" }, "ga", vim.lsp.buf.code_action, opts("Code Action"))
         vim.keymap.set("n", "<leader>ls", vim.lsp.buf.signature_help, opts("Show Signature Help"))
@@ -34,14 +78,6 @@ return {
           vim.diagnostic.setloclist()
           vim.cmd("lopen")
         end, { desc = "Open File Diagnostics (Loclist)" })
-
-        local border = "rounded"
-
-        vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
-          border = border,
-        })
-        vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help,
-          { border = border })
       end
 
       -- Setup LSP servers using official vim.lsp.config API
@@ -50,7 +86,7 @@ return {
       vim.lsp.config('lua_ls', {
         cmd = { 'lua-language-server' },
         filetypes = { 'lua' },
-        root_markers = { '.luarc.json', '.luarc.jsonc', '.git' },
+        root_dir = root_dir_from_markers({ '.luarc.json', '.luarc.jsonc', '.git' }),
         capabilities = capabilities,
         on_attach = on_attach,
         settings = {
@@ -110,7 +146,7 @@ return {
       vim.lsp.config('gopls', {
         cmd = { 'gopls' },
         filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
-        root_markers = { 'go.work', 'go.mod', '.git' },
+        root_dir = root_dir_from_markers({ 'go.work', 'go.mod', '.git' }),
         capabilities = gopls_capabilities,
         on_attach = on_attach,
         settings = {
@@ -130,7 +166,7 @@ return {
       vim.lsp.config('rust_analyzer', {
         cmd = { 'rust-analyzer' },
         filetypes = { 'rust' },
-        root_markers = { 'Cargo.toml', 'rust-project.json', '.git' },
+        root_dir = root_dir_from_markers({ 'Cargo.toml', 'rust-project.json', '.git' }),
         capabilities = capabilities,
         on_attach = on_attach,
         settings = {
@@ -145,7 +181,7 @@ return {
       vim.lsp.config('ruby_lsp', {
         cmd = { 'ruby-lsp' },
         filetypes = { 'ruby' },
-        root_markers = { 'Gemfile', '.git' },
+        root_dir = root_dir_from_markers({ 'Gemfile', '.git' }),
         capabilities = capabilities,
         on_attach = on_attach,
       })
@@ -154,7 +190,7 @@ return {
       vim.lsp.config('jsonls', {
         cmd = { 'vscode-json-language-server', '--stdio' },
         filetypes = { 'json', 'jsonc' },
-        root_markers = { '.git' },
+        root_dir = root_dir_from_markers({ '.git' }),
         capabilities = capabilities,
         on_attach = on_attach,
       })
@@ -163,7 +199,7 @@ return {
       vim.lsp.config('terraformls', {
         cmd = { 'terraform-ls', 'serve' },
         filetypes = { 'terraform', 'tf' },
-        root_markers = { '.terraform', '.git' },
+        root_dir = root_dir_from_markers({ '.terraform', '.git' }),
         capabilities = capabilities,
         on_attach = on_attach,
       })

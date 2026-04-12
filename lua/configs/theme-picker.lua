@@ -1,6 +1,6 @@
 local M = {}
 local theme_setup = require("utils.theme_setup")
-local DEFAULT_THEME = "catppuccin-mocha"
+local DEFAULT_THEME = "catppuccin-macchiato"
 
 -- Transparency state
 local transparency_enabled = false

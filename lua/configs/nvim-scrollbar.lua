@@ -10,22 +10,22 @@ return {
       show = true,
       set_highlights = true,
       handle = {
-        text = " ",
+        text = "▐",
         color = nil,
         color_nr = nil,
         highlight = "ScrollbarHandle",
       },
       marks = {
-        Cursor = { text = "•", priority = 0 },
-        Search = { text = { "-", "=" }, priority = 1, color = nil, highlight = "Search" },
-        Error = { text = { "" }, priority = 2, highlight = "DiagnosticVirtualTextError" },
-        Warn = { text = { "" }, priority = 3, highlight = "DiagnosticVirtualTextWarn" },
-        Info = { text = { "" }, priority = 4, highlight = "DiagnosticVirtualTextInfo" },
-        Hint = { text = { "" }, priority = 5, highlight = "DiagnosticVirtualTextHint" },
-        Misc = { text = { "·" }, priority = 6 },
-        GitAdd = { text = "│", highlight = "GitSignsAdd" },
-        GitChange = { text = "│", highlight = "GitSignsChange" },
-        GitDelete = { text = "_", highlight = "GitSignsDelete" },
+        Cursor = { text = "▐", priority = 0, highlight = "ScrollbarCursorHandle" },
+        Search = { text = { "▐" }, priority = 1, color = nil, highlight = "Search" },
+        Error = { text = { "▐" }, priority = 2, highlight = "DiagnosticVirtualTextError" },
+        Warn = { text = { "▐" }, priority = 3, highlight = "DiagnosticVirtualTextWarn" },
+        Info = { text = { "▐" }, priority = 4, highlight = "DiagnosticVirtualTextInfo" },
+        Hint = { text = { "▐" }, priority = 5, highlight = "DiagnosticVirtualTextHint" },
+        Misc = { text = { "▐" }, priority = 6 },
+        GitAdd = { text = "▐", highlight = "GitSignsAdd" },
+        GitChange = { text = "▐", highlight = "GitSignsChange" },
+        GitDelete = { text = "▐", highlight = "GitSignsDelete" },
       },
       handlers = {
         diagnostic = true,
@@ -38,7 +38,6 @@ return {
 
     require("scrollbar.handlers.search").setup()
 
-    -- Setup gitsigns handler with error handling
     local ok, gitsigns_handler = pcall(require, "scrollbar.handlers.gitsigns")
     if ok then
       gitsigns_handler.setup()
