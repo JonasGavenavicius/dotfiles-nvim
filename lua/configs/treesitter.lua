@@ -44,6 +44,7 @@ M.opts = {
 }
 
 function M.config(_, opts)
+  require("utils.treesitter_compat").setup()
   require("nvim-treesitter.configs").setup(opts)
 end
 
