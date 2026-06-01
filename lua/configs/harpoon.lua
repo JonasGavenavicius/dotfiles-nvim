@@ -117,7 +117,7 @@ local M = {
             return item.text
           end,
           on_select = function(item)
-            vim.cmd("edit " .. item.value)
+            vim.cmd.edit(vim.fn.fnameescape(item.value))
           end,
         })
       end,

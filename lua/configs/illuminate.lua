@@ -19,7 +19,6 @@ return {
       'NvimTree',       -- File tree
       'trouble',        -- Diagnostics window
       'toggleterm',     -- Terminal
-      'TelescopePrompt',-- Telescope picker
       'neo-tree',       -- File tree
       'DiffviewFiles',  -- Diff view
       'help',           -- Help pages

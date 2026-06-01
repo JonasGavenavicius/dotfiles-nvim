@@ -41,7 +41,11 @@ if not ok then
   return
 end
 
-lazy.setup(require("plugins"))
+lazy.setup(require("plugins"), {
+  rocks = {
+    enabled = false,
+  },
+})
 
 local theme_picker = require("configs.theme-picker")
 theme_picker.load_startup_theme()

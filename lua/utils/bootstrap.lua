@@ -13,19 +13,32 @@ end
 
 local function install_treesitter_parsers()
   local treesitter = require("configs.treesitter")
+  local ts_parsers = require("nvim-treesitter.parsers")
   local parsers = treesitter.parsers or {}
+  local missing = {}
 
   if #parsers == 0 then
     return
   end
 
-  local ok, err = pcall(vim.cmd, "TSInstallSync " .. table.concat(parsers, " "))
+  for _, parser in ipairs(parsers) do
+    if not ts_parsers.has_parser(parser) then
+      table.insert(missing, parser)
+    end
+  end
+
+  if #missing == 0 then
+    vim.notify("Treesitter parsers are already installed.", vim.log.levels.INFO)
+    return
+  end
+
+  local ok, err = pcall(vim.cmd, "TSInstallSync " .. table.concat(missing, " "))
   if not ok then
     vim.notify("Treesitter bootstrap failed: " .. err, vim.log.levels.ERROR)
     return
   end
 
-  vim.notify("Treesitter parsers are up to date.", vim.log.levels.INFO)
+  vim.notify("Treesitter parsers installed: " .. table.concat(missing, ", "), vim.log.levels.INFO)
 end
 
 local function install_mason_packages()
@@ -33,12 +46,34 @@ local function install_mason_packages()
   local registry = require("mason-registry")
   local mappings = require("mason-lspconfig.mappings").get_mason_map().lspconfig_to_package
   local package_names = {}
+  local seen = {}
 
-  for _, server in ipairs(mason.servers) do
-    table.insert(package_names, mappings[server] or server)
+  local function add_package(package_name)
+    if package_name and package_name ~= "" and not seen[package_name] then
+      seen[package_name] = true
+      table.insert(package_names, package_name)
+    end
   end
 
-  vim.list_extend(package_names, mason.dap_adapters or {})
+  for _, server in ipairs(mason.servers) do
+    add_package(mappings[server] or server)
+  end
+
+  for _, package_name in ipairs(mason.dap_adapters or {}) do
+    add_package(package_name)
+  end
+
+  for _, package_name in ipairs(mason.formatters or {}) do
+    add_package(package_name)
+  end
+
+  for _, package_name in ipairs(mason.linters or {}) do
+    add_package(package_name)
+  end
+
+  for _, package_name in ipairs(mason.tools or {}) do
+    add_package(package_name)
+  end
 
   registry.refresh(vim.schedule_wrap(function(success)
     if not success then

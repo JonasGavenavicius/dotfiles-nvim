@@ -4,6 +4,7 @@ local M = {
   lazy = false,
   opts = {
     picker = {
+      ui_select = true,
       layout = {
         preset = "default",
         layout = {
@@ -35,6 +36,8 @@ M.config = function(_, opts)
 
   local map = vim.keymap.set
   local picker = require("snacks").picker
+
+  vim.ui.select = picker.select
 
   map("n", "<leader>ff", picker.files, { desc = "Find Files" })
   map("n", "<leader>fg", function() picker.grep({ regex = false }) end, { desc = "Grep (Literal)" })

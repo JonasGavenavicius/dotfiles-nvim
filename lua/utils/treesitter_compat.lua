@@ -4,16 +4,12 @@ local did_setup = false
 
 local html_script_type_languages = {
   ["importmap"] = "json",
-  ["module"] = "javascript",
-  ["application/ecmascript"] = "javascript",
-  ["text/ecmascript"] = "javascript",
 }
 
 local non_filetype_match_injection_language_aliases = {
   ex = "elixir",
   pl = "perl",
   sh = "bash",
-  ts = "typescript",
   uxn = "uxntal",
 }
 

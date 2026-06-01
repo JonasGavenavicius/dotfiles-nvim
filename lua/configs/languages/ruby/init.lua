@@ -1,9 +1,11 @@
 local M = {
   {
-    "tpope/vim-rails"
+    "tpope/vim-rails",
+    ft = { "ruby", "eruby" },
   },
   { -- Automatically add end for ruby files
-    "tpope/vim-endwise"
+    "tpope/vim-endwise",
+    ft = { "ruby", "eruby" },
   }
 }
 

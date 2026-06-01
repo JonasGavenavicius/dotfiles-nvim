@@ -1,35 +1,23 @@
 local M = {
-    "stevearc/conform.nvim",
+  "stevearc/conform.nvim",
 }
 
 M.config = function()
-    local conform = require("conform")
-    conform.setup({
-        formatters_by_ft = {
-            javascript = { "prettier" },
-            typescript = { "prettier" },
-            javascriptreact = { "prettier" },
-            typescriptreact = { "prettier" },
-            svelte = { "prettier" },
-            css = { "prettier" },
-            html = { "prettier" },
-            json = { "prettier" },
-            yaml = { "prettier" },
-            markdown = { "prettier" },
-            graphql = { "prettier" },
-            -- Conform will run multiple formatters sequentially
-            go = { "gofumpt", "goimports", "goimports-reviser" },
-            terraform = { "terraform_fmt" },
-            python = { "isort", "black" },
-            ruby = { "rubocop" },
-            rust = { "rustfmt" },
-        },
-        format_after_save = {
-            lsp_fallback = true,
-            async = true,
-            timeout_ms = 1000,
-        },
-    })
+  local conform = require("conform")
+
+  conform.setup({
+    formatters_by_ft = {
+      go = { "gofumpt", "goimports" },
+      lua = { "stylua" },
+      ruby = { "rubocop" },
+      rust = { "rustfmt" },
+    },
+    format_after_save = {
+      lsp_format = "fallback",
+      async = true,
+      timeout_ms = 1000,
+    },
+  })
 end
 
 return M

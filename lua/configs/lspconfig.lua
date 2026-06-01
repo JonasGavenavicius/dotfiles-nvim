@@ -2,9 +2,6 @@ return {
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
-    opts = {
-      inlay_hints = { enabled = true },
-    },
     config = function()
       local util = require("lspconfig.util")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -186,31 +183,11 @@ return {
         on_attach = on_attach,
       })
 
-      -- jsonls (JSON Language Server)
-      vim.lsp.config('jsonls', {
-        cmd = { 'vscode-json-language-server', '--stdio' },
-        filetypes = { 'json', 'jsonc' },
-        root_dir = root_dir_from_markers({ '.git' }),
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-
-      -- terraformls (Terraform Language Server)
-      vim.lsp.config('terraformls', {
-        cmd = { 'terraform-ls', 'serve' },
-        filetypes = { 'terraform', 'tf' },
-        root_dir = root_dir_from_markers({ '.terraform', '.git' }),
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-      
       -- Enable each configured server
       vim.lsp.enable('lua_ls')
       vim.lsp.enable('gopls')
       vim.lsp.enable('rust_analyzer')
       vim.lsp.enable('ruby_lsp')
-      vim.lsp.enable('jsonls')
-      vim.lsp.enable('terraformls')
     end,
   },
 }

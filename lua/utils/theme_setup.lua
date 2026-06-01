@@ -46,10 +46,6 @@ function M.configure(theme_name, transparent)
           enabled = true,
           indentscope_color = "",
         },
-        telescope = {
-          enabled = false,
-          style = "nvchad",
-        },
         native_lsp = {
           enabled = true,
           virtual_text = {
@@ -151,7 +147,6 @@ function M.configure(theme_name, transparent)
       transparent = transparent,
       italic_comments = true,
       hide_fillchars = false,
-      borderless_telescope = true,
       terminal_colors = true,
       cache = true,
       theme = {

@@ -15,38 +15,51 @@ map("v", ">", ">gv", { desc = "Indent right and reselect" })
 
 -- LSP / Buffer
 map("n", "grb", function()
-    vim.lsp.buf.format()
+  vim.lsp.buf.format()
 end, { desc = "Format current buffer" })
 
 -- Copy relative file path
 map("n", "<leader>lf", function()
-    local path = vim.fn.expand("%")
-    vim.fn.setreg("+", path)
-    print("Copied: " .. path)
+  local path = vim.fn.expand("%")
+  vim.fn.setreg("+", path)
+  print("Copied: " .. path)
 end, { desc = "Copy relative file path to clipboard" })
 
 -- Helper: interactive string replace
 local function replace_cmd(scope, confirm)
-    return function()
-        vim.ui.input(
-        { prompt = "Find string" .. (scope ~= "%" and " (global)" or "") .. (confirm and "" or " (no confirm)") .. ": " },
-            function(source)
-                if not source or source == "" then return end
-                vim.ui.input({ prompt = "Replace with: " }, function(target)
-                    if not target then return end
-                    source = vim.fn.escape(source, "/")
-                    target = vim.fn.escape(target, "/&")
-                    local flags = confirm and "gc" or "g"
-                    local cmd = (scope == "%") and string.format("%%s/%s/%s/%s", source, target, flags)
-                        or string.format("cfdo %%s/%s/%s/%s | update", source, target, flags)
-                    vim.cmd(cmd)
-                end)
-            end)
-    end
+  return function()
+    local scope_label = scope == "%" and "buffer" or "quickfix files"
+    local confirm_label = confirm and "confirm each" or "no confirm"
+
+    vim.ui.input({ prompt = string.format("Find string (%s, %s): ", scope_label, confirm_label) }, function(source)
+      if not source or source == "" then
+        return
+      end
+
+      vim.ui.input({ prompt = "Replace with: " }, function(target)
+        if target == nil then
+          return
+        end
+
+        source = vim.fn.escape(source, [[\/|]])
+        target = vim.fn.escape(target, [[\/&|]])
+
+        local flags = confirm and "gc" or "g"
+        local cmd
+        if scope == "%" then
+          cmd = string.format("keeppatterns %%s/%s/%s/%s", source, target, flags)
+        else
+          cmd = string.format("cfdo keeppatterns %%s/%s/%s/%s | update", source, target, flags)
+        end
+
+        vim.cmd(cmd)
+      end)
+    end)
+  end
 end
 
 -- Replace mappings
 map("n", "<leader>sS", replace_cmd("%", false), { desc = "Replace in buffer (no confirm)" })
 map("n", "<leader>ss", replace_cmd("%", true), { desc = "Replace in buffer (confirm each)" })
-map("n", "<leader>sG", replace_cmd("argdo", false), { desc = "Replace in quickfix files (no confirm)" })
-map("n", "<leader>sg", replace_cmd("argdo", true), { desc = "Replace in quickfix files (confirm each)" })
+map("n", "<leader>sG", replace_cmd("quickfix", false), { desc = "Replace in quickfix files (no confirm)" })
+map("n", "<leader>sg", replace_cmd("quickfix", true), { desc = "Replace in quickfix files (confirm each)" })

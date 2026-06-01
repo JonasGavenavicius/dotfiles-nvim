@@ -10,8 +10,6 @@ local M = {
 
 M.servers = {
   "lua_ls",
-  "jsonls",
-  "terraformls",
   "rust_analyzer",
   "ruby_lsp",
   "gopls",
@@ -19,6 +17,19 @@ M.servers = {
 
 M.dap_adapters = {
   "codelldb",
+  "delve",
+}
+
+M.formatters = {
+  "gofumpt",
+  "goimports",
+  "rubocop",
+  "stylua",
+}
+
+M.linters = {
+  "golangci-lint",
+  "rubocop",
 }
 
 function M.config()

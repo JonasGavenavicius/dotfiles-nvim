@@ -1,11 +1,16 @@
 -- Go DAP configuration
 local M = {}
 
--- Find dlv in PATH, GOPATH, or common locations
+-- Find dlv in PATH, Mason, GOPATH, or common locations
 local function find_dlv()
   -- Try PATH first
   if vim.fn.executable("dlv") == 1 then
     return "dlv"
+  end
+
+  local mason_dlv = vim.fn.stdpath("data") .. "/mason/bin/dlv"
+  if vim.fn.executable(mason_dlv) == 1 then
+    return mason_dlv
   end
 
   -- Try GOPATH/bin
@@ -23,7 +28,8 @@ local function find_dlv()
     return default_dlv
   end
 
-  return "dlv" -- Let it fail with clear error
+  vim.notify("dlv is not installed. Run :NvimBootstrap or :MasonInstall delve.", vim.log.levels.WARN)
+  return "dlv"
 end
 
 -- Helper function for Go executable selection (synchronous for DAP)

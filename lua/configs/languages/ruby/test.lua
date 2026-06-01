@@ -43,11 +43,14 @@ function M.run_nearest_test_in_terminal()
 end
 
 function M.kill_rspec_processes()
-  vim.fn.jobstart({ "pkill", "-f", "rspec" }, {
-    on_exit = function()
-      print("Killed all rspec processes.")
-    end,
-  })
+  if test_term then
+    test_term:shutdown()
+    test_term = nil
+    vim.notify("Stopped RSpec terminal.", vim.log.levels.INFO)
+    return
+  end
+
+  vim.notify("No RSpec terminal is running.", vim.log.levels.INFO)
 end
 
 function M.setup_keymaps()

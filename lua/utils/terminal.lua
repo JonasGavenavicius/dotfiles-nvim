@@ -86,9 +86,6 @@ M.run_commands = {
   go = function(file) return "go run " .. vim.fn.shellescape(file) end,
   rust = function(_) return "cargo run" end,
   ruby = function(file) return "bundle exec ruby " .. vim.fn.shellescape(file) end,
-  python = function(file) return "python " .. vim.fn.shellescape(file) end,
-  javascript = function(file) return "node " .. vim.fn.shellescape(file) end,
-  typescript = function(file) return "tsx " .. vim.fn.shellescape(file) end,
   lua = function(file) return "lua " .. vim.fn.shellescape(file) end,
 }
 

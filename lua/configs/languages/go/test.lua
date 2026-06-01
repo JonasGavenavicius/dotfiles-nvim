@@ -90,11 +90,14 @@ function M.run_tests_with_coverage()
 end
 
 function M.kill_go_test_processes()
-  vim.fn.jobstart({ "pkill", "-f", "go test" }, {
-    on_exit = function()
-      print("Killed all go test processes.")
-    end,
-  })
+  if test_term then
+    test_term:shutdown()
+    test_term = nil
+    vim.notify("Stopped Go test terminal.", vim.log.levels.INFO)
+    return
+  end
+
+  vim.notify("No Go test terminal is running.", vim.log.levels.INFO)
 end
 
 function M.setup_keymaps()

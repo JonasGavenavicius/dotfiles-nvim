@@ -6,7 +6,6 @@ local M = {
     "nvim-lua/plenary.nvim",
     "antoinemadec/FixCursorHold.nvim",
     "nvim-treesitter/nvim-treesitter",
-    "nvim-neotest/neotest-jest",
     "nvim-neotest/neotest-go",
     "rouge8/neotest-rust",
     "olimorris/neotest-rspec",
@@ -25,7 +24,6 @@ M.config = function()
       enabled = true,
     },
     adapters = {
-      require("neotest-jest"),
       require("neotest-rust"),
       require("neotest-go")({
         experimental = {

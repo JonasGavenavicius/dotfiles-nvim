@@ -17,7 +17,12 @@ M.setup = function()
   -- Smart debug (Go only for now)
   map("n", "<leader>rd", function()
     if vim.bo.filetype == "go" then
-      require("dap").continue() -- Opens DAP config picker
+      local dap = require("dap")
+      if dap.configurations.go and dap.configurations.go[1] then
+        dap.run(dap.configurations.go[1])
+      else
+        dap.continue()
+      end
     else
       vim.notify("Smart debug only supported for Go", vim.log.levels.WARN)
     end
