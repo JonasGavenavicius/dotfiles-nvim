@@ -19,7 +19,6 @@ add(require("configs.themes.rose-pine"))
 add(require("configs.themes.cyberdream"))
 
 add({ "nvim-lua/plenary.nvim", lazy = true })
-add(require("configs.lspkind"))
 add(require("configs.web-icons"))
 add(require("configs.which-key"))
 add(require("configs.mason"))

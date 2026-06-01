@@ -209,10 +209,10 @@ Themes: Catppuccin Latte/Frappe/Macchiato/Mocha, Gruvbox, Rose Pine Main/Moon/Da
 | --- | --- |
 | `<C-p>` / `<C-n>` | Previous/next completion item |
 | `<C-d>` / `<C-f>` | Scroll completion docs |
-| `<C-Space>` | Trigger completion |
-| `<C-e>` | Abort completion |
+| `<C-Space>` | Trigger completion or documentation |
+| `<C-e>` | Hide completion menu |
 | `<CR>` | Confirm explicitly selected item |
-| `<Tab>` / `<S-Tab>` | Next/previous completion or snippet jump |
+| `<Tab>` / `<S-Tab>` | Next/previous completion item or snippet jump |
 | `<C-a>` | Accept Copilot suggestion |
 | `<C-j>` / `<C-k>` | Next/previous Copilot suggestion |
 

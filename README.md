@@ -17,7 +17,7 @@ nvim
 ## Features
 
 - **LSP**: `gopls`, `rust-analyzer`, `ruby-lsp`, and `lua_ls`
-- **Completion**: `nvim-cmp`, LuaSnip snippets, optional GitHub Copilot suggestions
+- **Completion**: `blink.cmp`, LuaSnip snippets, optional GitHub Copilot suggestions
 - **Debugging**: DAP for Go, Rust, and Ruby
 - **Testing**: Neotest plus terminal helpers for Go and RSpec
 - **Formatting/Linting**: Conform and nvim-lint for Go, Rust, Ruby, and Lua config work

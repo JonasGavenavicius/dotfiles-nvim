@@ -4,7 +4,7 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       local util = require("lspconfig.util")
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
+      local capabilities = require("blink.cmp").get_lsp_capabilities()
 
       local function buffer_path(bufnr)
         local name = vim.api.nvim_buf_get_name(bufnr)
